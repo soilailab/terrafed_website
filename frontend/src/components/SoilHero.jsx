@@ -9,8 +9,26 @@ gsap.registerPlugin(ScrollTrigger);
 export default function SoilHero({ navHeight = 0 }) {
   const sectionRef = useRef(null);
   const progressRef = useRef(0);
+  const mouseRef = useRef({ x: 0.5, y: 0.5 });
   // Populated by SoilHeroScene after R3F mounts — lets scroll events trigger frames
   const invalidateRef = useRef(null);
+
+  function handlePointerMove(e) {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const rect = section.getBoundingClientRect();
+    mouseRef.current = {
+      x: Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1),
+      y: 1 - Math.min(Math.max((e.clientY - rect.top) / rect.height, 0), 1),
+    };
+    invalidateRef.current?.();
+  }
+
+  function handlePointerLeave() {
+    mouseRef.current = { x: 0.5, y: 0.5 };
+    invalidateRef.current?.();
+  }
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -44,6 +62,8 @@ export default function SoilHero({ navHeight = 0 }) {
   return (
     <section
       ref={sectionRef}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
       // No overflow-hidden here — it breaks GSAP's pin-spacer injection
       className="relative h-[85svh] w-full rounded-[2rem] bg-black"
     >
@@ -61,7 +81,11 @@ export default function SoilHero({ navHeight = 0 }) {
           dpr={[1, 2]}
           gl={{ antialias: true, alpha: false }}
         >
-          <SoilHeroScene progressRef={progressRef} invalidateRef={invalidateRef} />
+          <SoilHeroScene
+            progressRef={progressRef}
+            mouseRef={mouseRef}
+            invalidateRef={invalidateRef}
+          />
         </Canvas>
       </div>
 

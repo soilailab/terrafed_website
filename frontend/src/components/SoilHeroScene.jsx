@@ -10,6 +10,7 @@ const SoilRevealMaterial = shaderMaterial(
     uTime: 0,
     uProgress: 0,
     uResolution: new THREE.Vector2(1, 1),
+    uMouse: new THREE.Vector2(0.5, 0.5),
   },
   /* vertex */
   `
@@ -25,6 +26,7 @@ const SoilRevealMaterial = shaderMaterial(
     uniform float uTime;
     uniform float uProgress;
     uniform vec2 uResolution;
+    uniform vec2 uMouse;
 
     // Hash lattice point to a pseudo-random 2D unit gradient direction
     vec2 gradDir(vec2 p) {
@@ -74,7 +76,7 @@ const SoilRevealMaterial = shaderMaterial(
 
       // Layered terrain noise — gradient noise gives smooth organic forms
       float coarse  = gn(uv * 6.0);
-      float medium  = gn(uv * 18.0 + uTime * 0.02);
+      float medium  = gn(uv * 18.0 + uTime * 0.06);
       float fine    = gn(uv * 50.0);
       // Blended gradient noise clusters around 0.5; remap [0.25, 0.75] → [0, 1]
       // so all six palette stops (including blue) appear with roughly equal frequency.
@@ -108,33 +110,41 @@ const SoilRevealMaterial = shaderMaterial(
       vec3 bwColor  = vec3(mix(0.36, 0.96, terrain * 0.8 + parcels * 0.2));
 
       // SOM colour map
-      vec3 somColor = somPalette(terrain) * (0.8 + 0.2 * parcels);
+      vec3 somColor = somPalette(terrain) * (0.9 + 0.35 * parcels);
 
       // Scroll-driven diagonal reveal
-      float reveal      = smoothstep(0.05, 0.85, uProgress);
-      float sweep       = smoothstep(-0.2, 1.2, uv.x + uv.y + (uProgress * 1.2 - 0.6));
-      float organicMask = smoothstep(0.25, 0.75, terrain + medium * 0.15);
+      float reveal      = smoothstep(0.0, 1.0, uProgress);
+      float sweep       = smoothstep(-0.3, 1.3, uv.x + uv.y + (uProgress * 1.15 - 0.575));
+      float organicMask = smoothstep(0.20, 0.80, terrain + medium * 0.15);
       float mixAmount   = reveal * sweep * organicMask;
 
       vec3 color = mix(bwColor, somColor, mixAmount);
 
+      // Boost saturation and richness as the reveal completes
+      color = mix(color, somColor, 0.18 * reveal);
+
       // Subtle vegetation / moisture tints at full reveal
-      color = mix(color, vec3(0.98, 0.25, 0.10), 0.08 * reveal * fine);
-      color = mix(color, vec3(0.15, 0.45, 0.20), 0.12 * reveal * medium);
+      color = mix(color, vec3(0.98, 0.25, 0.10), 0.12 * reveal * fine);
+      color = mix(color, vec3(0.15, 0.45, 0.20), 0.16 * reveal * medium);
+
+      // Subtle contour overlay
+      float contourField = terrain * 12.0 + medium * 0.8 + fine * 0.25;
+      float contourLine = 1.0 - smoothstep(0.0, 0.08, abs(fract(contourField) - 0.5));
+      contourLine *= 0.08 * (0.25 + 0.75 * reveal);
+      color = mix(color, vec3(0.98, 0.96, 0.90), contourLine);
 
       // Grid lines
       color = mix(color, vec3(0.0), gridLine * 0.22);
 
-
       gl_FragColor = vec4(color, 1.0);
     }
-  `
+  `,
 );
 
 extend({ SoilRevealMaterial });
 
 // Accepts progressRef (scroll position) and invalidateRef (so parent can trigger frames)
-export default function SoilHeroScene({ progressRef, invalidateRef }) {
+export default function SoilHeroScene({ progressRef, mouseRef, invalidateRef }) {
   const materialRef = useRef();
   const { invalidate } = useThree();
 
@@ -142,7 +152,9 @@ export default function SoilHeroScene({ progressRef, invalidateRef }) {
   // scroll events fired outside the R3F tree can request new frames.
   useEffect(() => {
     invalidateRef.current = invalidate;
-    return () => { invalidateRef.current = null; };
+    return () => {
+      invalidateRef.current = null;
+    };
   }, [invalidate, invalidateRef]);
 
   // Keep the uTime noise animation alive at ~12 fps even when the user is not
@@ -150,7 +162,7 @@ export default function SoilHeroScene({ progressRef, invalidateRef }) {
   // so 12 fps is imperceptible. Without this, the scene would be completely frozen
   // between scroll events in frameloop="demand" mode.
   useEffect(() => {
-    const id = window.setInterval(invalidate, 83);
+    const id = window.setInterval(invalidate, 16);
     return () => window.clearInterval(id);
   }, [invalidate]);
 
@@ -160,6 +172,7 @@ export default function SoilHeroScene({ progressRef, invalidateRef }) {
     materialRef.current.uTime = state.clock.elapsedTime;
     materialRef.current.uProgress = progressRef.current;
     materialRef.current.uResolution.set(state.size.width, state.size.height);
+    materialRef.current.uMouse.set(mouseRef.current.x, mouseRef.current.y);
   });
 
   return (
@@ -170,5 +183,3 @@ export default function SoilHeroScene({ progressRef, invalidateRef }) {
     </mesh>
   );
 }
-
-

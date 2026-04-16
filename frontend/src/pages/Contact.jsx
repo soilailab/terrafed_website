@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdNorthEast } from "react-icons/md";
+import Navbar from "../components/Navbar/Navbar";
 
 function Contact() {
   const navigate = useNavigate();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
   const isLocalHost =
-    typeof window !== "undefined" && ["localhost", "127.0.0.1"].includes(window.location.hostname);
+    typeof window !== "undefined" &&
+    ["localhost", "127.0.0.1"].includes(window.location.hostname);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -17,6 +19,10 @@ function Contact() {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, []);
 
   function handleChange(e) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -68,7 +74,9 @@ function Contact() {
           throw new Error("Failed to submit the contact form.");
         }
       } else {
-        throw new Error("Set the API base URL for local testing, or deploy on Netlify to use Netlify Forms.");
+        throw new Error(
+          "Set the API base URL for local testing, or deploy on Netlify to use Netlify Forms.",
+        );
       }
 
       setSubmitted(true);
@@ -115,77 +123,7 @@ function Contact() {
       className="relative flex flex-col items-center bg-white px-4 pb-5 md:px-10"
       style={{ minHeight: "100vh" }}
     >
-      {/* Nav */}
-      <div
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 40,
-          backgroundColor: "white",
-          width: "100%",
-          maxWidth: 1500,
-          paddingTop: 20,
-          paddingBottom: 12,
-          justifyContent: "space-between",
-          alignItems: "center",
-          display: "flex",
-          borderBottom: "1px #E9E9E9 solid",
-        }}
-      >
-        <div
-          onClick={() => navigate("/")}
-          style={{
-            color: "black",
-            fontSize: 30,
-            fontWeight: "500",
-            lineHeight: "36px",
-            cursor: "pointer",
-          }}
-        >
-          TerraFedLogo
-        </div>
-        {/* Centered links */}
-        <div
-          style={{
-            position: "absolute",
-            left: "50%",
-            transform: "translateX(-50%)",
-            display: "flex",
-            alignItems: "center",
-            gap: 27,
-          }}
-        >
-          {[
-            { label: "Benefits", path: "/#benefits" },
-            { label: "How It Works", path: "/#features" },
-            { label: "Contact", path: "/contact" },
-          ].map(({ label, path }) => (
-            <div
-              key={label}
-              onClick={() => {
-                if (path.startsWith("/#")) {
-                  navigate("/");
-                  setTimeout(() => {
-                    const id = path.slice(2);
-                    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-                  }, 100);
-                } else {
-                  navigate(path);
-                }
-              }}
-              style={{
-                color: label === "Contact" ? "#0FD12F" : "black",
-                fontSize: 14,
-                fontWeight: "700",
-                lineHeight: "19.6px",
-                cursor: "pointer",
-              }}
-            >
-              {label}
-            </div>
-          ))}
-        </div>
-      </div>
+      <Navbar />
 
       {/* Main content */}
       <div
@@ -200,15 +138,17 @@ function Contact() {
         }}
       >
         {/* Header */}
-        <div style={{ 
-          alignSelf: "stretch",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          textAlign: "center",
-          gap: 20,
-          display: "flex",
-        }}>
+        <div
+          style={{
+            alignSelf: "stretch",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            textAlign: "center",
+            gap: 20,
+            display: "flex",
+          }}
+        >
           <div
             style={{
               color: "#0FD12F",
@@ -238,7 +178,8 @@ function Contact() {
               maxWidth: 560,
             }}
           >
-            Reach out to the TerraFed team to schedule a demo, discuss your use case, or learn more about our federated soil mapping platform.
+            Reach out to the TerraFed team to schedule a demo, discuss your use
+            case, or learn more about our federated soil mapping platform.
           </div>
         </div>
 
@@ -316,9 +257,7 @@ function Contact() {
               }}
             >
               <div style={{ flex: "1 1 240px" }}>
-                <label style={labelStyle}>
-                  Full name {requiredMark}
-                </label>
+                <label style={labelStyle}>Full name {requiredMark}</label>
                 <input
                   name="name"
                   type="text"
@@ -330,9 +269,7 @@ function Contact() {
                 />
               </div>
               <div style={{ flex: "1 1 240px" }}>
-                <label style={labelStyle}>
-                  Email {requiredMark}
-                </label>
+                <label style={labelStyle}>Email {requiredMark}</label>
                 <input
                   name="email"
                   type="email"
@@ -371,9 +308,14 @@ function Contact() {
                   name="role"
                   value={form.role}
                   onChange={handleChange}
-                  style={{ ...inputStyle, color: form.role ? "black" : "#9ca3af" }}
+                  style={{
+                    ...inputStyle,
+                    color: form.role ? "black" : "#9ca3af",
+                  }}
                 >
-                  <option value="" disabled>Select a role</option>
+                  <option value="" disabled>
+                    Select a role
+                  </option>
                   <option value="Agronomist">Agronomist</option>
                   <option value="Researcher">Researcher</option>
                   <option value="Land Manager">Land Manager</option>
@@ -386,9 +328,7 @@ function Contact() {
 
             {/* Message */}
             <div>
-              <label style={labelStyle}>
-                Message {requiredMark}
-              </label>
+              <label style={labelStyle}>Message {requiredMark}</label>
               <textarea
                 name="message"
                 placeholder="Tell us about your use case or what you'd like to demo..."
@@ -438,7 +378,9 @@ function Contact() {
                   fontFamily: "inherit",
                 }}
               >
-                <span style={{ color: "white", fontSize: 14, fontWeight: "700" }}>
+                <span
+                  style={{ color: "white", fontSize: 14, fontWeight: "700" }}
+                >
                   {isSubmitting ? "Sending..." : "Send Message"}
                 </span>
                 <MdNorthEast style={{ color: "white", fontSize: 14 }} />
@@ -476,7 +418,9 @@ function Contact() {
                   navigate("/");
                   setTimeout(() => {
                     const id = path.slice(2);
-                    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+                    document
+                      .getElementById(id)
+                      ?.scrollIntoView({ behavior: "smooth" });
                   }, 100);
                 } else {
                   navigate(path);

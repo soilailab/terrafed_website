@@ -1,59 +1,208 @@
-import { useState } from "react";
-import { IoClose, IoMenu } from "react-icons/io5";
+import { useLayoutEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { useLocation, useNavigate } from "react-router-dom";
+import { MdNorthEast } from "react-icons/md";
 
 const navLinks = [
-  { id: 1, path: "#about", name: "About" },
-  { id: 2, path: "#features", name: "Features" },
-  { id: 3, path: "#contact", name: "Contact" },
-  { id: 4, path: "/development", name: "Development" },
+  { label: "Benefits", path: "/#benefits", sectionId: "benefits" },
+  { label: "How It Works", path: "/#features", sectionId: "features" },
+  { label: "Contact", path: "/contact", sectionId: "contact" },
 ];
 
-const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+function Navbar({
+  onHeightChange,
+  activeSection,
+  ctaLabel = "Book a Demo",
+  ctaPath = "/contact",
+  logoText = "TerraFedLogo",
+}) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const navRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+
+    const updateHeight = () => {
+      onHeightChange?.(nav.offsetHeight);
+    };
+
+    updateHeight();
+
+    const ro = new ResizeObserver(updateHeight);
+    ro.observe(nav);
+    return () => ro.disconnect();
+  }, [onHeightChange]);
+
+  function handleLogoClick() {
+    if (location.pathname === "/") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    navigate("/");
+  }
+
+  function handlePathClick(path) {
+    if (path === "/contact") {
+      if (location.pathname === "/contact") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        navigate("/contact");
+        setTimeout(() => {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }, 100);
+      }
+      return;
+    }
+
+    if (path.startsWith("/#")) {
+      const id = path.slice(2);
+
+      if (location.pathname === "/") {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      } else {
+        navigate("/");
+        setTimeout(() => {
+          document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      }
+      return;
+    }
+
+    navigate(path);
+  }
+
+  function handleCtaClick() {
+    handlePathClick(ctaPath);
+  }
+
+  const currentSection =
+    location.pathname === "/contact" ? "contact" : activeSection;
+  const hideCta = location.pathname === "/contact";
 
   return (
-    <header className="fixed top-0 left-0 w-full py-5 px-[2%] lg:flex lg:justify-between lg:items-center z-[100] bg-black/70 backdrop-blur-md shadow-xl">
-      <div className="flex justify-between items-center">
-        <a href="/" className="text-2xl text-white font-bold tracking-wide">
-          TerraFed
-        </a>
-        <button
-          className="text-3xl text-white cursor-pointer lg:hidden"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label="Toggle menu"
-        >
-          {isOpen ? <IoClose /> : <IoMenu />}
-        </button>
+    <div
+      id="site-nav"
+      ref={navRef}
+      style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 40,
+        backgroundColor: "white",
+        width: "100%",
+        maxWidth: 1500,
+        paddingTop: 20,
+        paddingBottom: 12,
+        justifyContent: "space-between",
+        alignItems: "center",
+        display: "flex",
+      }}
+    >
+      <div
+        onClick={handleLogoClick}
+        style={{
+          color: "black",
+          fontSize: 30,
+          fontWeight: "500",
+          lineHeight: "36px",
+          cursor: "pointer",
+        }}
+      >
+        {logoText}
       </div>
 
-      {/* Nav links */}
-      <nav
-        className={`${
-          isOpen ? "max-h-64" : "max-h-0 overflow-hidden"
-        } transition-all duration-500 lg:max-h-none lg:overflow-visible`}
+      <div
+        style={{
+          position: "absolute",
+          left: "50%",
+          transform: "translateX(-50%)",
+          paddingLeft: 24,
+          paddingRight: 24,
+          paddingTop: 20,
+          paddingBottom: 20,
+          background: "rgba(255,255,255,0.40)",
+          overflow: "hidden",
+          borderRadius: 100,
+          backdropFilter: "blur(15px)",
+          WebkitBackdropFilter: "blur(15px)",
+          display: "flex",
+          alignItems: "center",
+          gap: 27,
+        }}
       >
-        <ul className="flex flex-col lg:flex-row lg:gap-6 mt-4 lg:mt-0">
-          {navLinks.map((link) => (
-            <li key={link.id}>
-              <a
-                href={link.path}
-                className="block text-white font-medium text-lg px-2 py-3 text-center hover:text-primary transition-colors duration-200"
-              >
-                {link.name}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
+        {navLinks.map(({ label, path, sectionId }) => {
+          const isActive = currentSection === sectionId;
 
-      <a
-        href="#"
-        className="hidden lg:inline-block border-2 border-white rounded-xl text-lg font-bold text-white px-5 py-2 hover:bg-white hover:text-primary transition-colors duration-200"
+          return (
+            <div
+              key={label}
+              onClick={() => handlePathClick(path)}
+              style={{
+                position: "relative",
+                color: isActive ? "#0FD12F" : "black",
+                fontSize: 14,
+                fontWeight: "700",
+                lineHeight: "19.6px",
+                cursor: "pointer",
+                paddingBottom: 4,
+                transition: "color 0.25s ease",
+              }}
+            >
+              {label}
+              <motion.span
+                style={{
+                  position: "absolute",
+                  bottom: 0,
+                  left: 0,
+                  height: 2,
+                  borderRadius: 2,
+                  background: "#0FD12F",
+                  display: "block",
+                }}
+                initial={{ width: 0 }}
+                animate={{ width: isActive ? "100%" : "0%" }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+              />
+            </div>
+          );
+        })}
+      </div>
+
+      <div
+        onClick={hideCta ? undefined : handleCtaClick}
+        aria-hidden={hideCta}
+        style={{
+          paddingLeft: 22,
+          paddingRight: 22,
+          paddingTop: 14,
+          paddingBottom: 14,
+          background: "#2A7AB3",
+          borderRadius: 1000,
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 4,
+          display: "flex",
+          cursor: hideCta ? "default" : "pointer",
+          visibility: hideCta ? "hidden" : "visible",
+          pointerEvents: hideCta ? "none" : "auto",
+        }}
       >
-        Get Started
-      </a>
-    </header>
+        <div
+          style={{
+            color: "white",
+            fontSize: 14,
+            fontWeight: "700",
+            lineHeight: "19.6px",
+          }}
+        >
+          {ctaLabel}
+        </div>
+        <MdNorthEast style={{ color: "white", fontSize: 12 }} />
+      </div>
+    </div>
   );
-};
+}
 
 export default Navbar;

@@ -1,4 +1,4 @@
-import { useRef, useLayoutEffect, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -11,11 +11,8 @@ import {
   MdNorthEast,
 } from "react-icons/md";
 import SoilHero from "../components/SoilHero";
+import Navbar from "../components/Navbar/Navbar";
 import SatBanner from "../assets/satbanner.png";
-
-
-
-
 
 const screenModules = import.meta.glob("../assets/examplescreens/screen*.png", {
   eager: true,
@@ -27,7 +24,6 @@ const screens = Object.keys(screenModules)
 
 function Home() {
   const navigate = useNavigate();
-  const navRef = useRef(null);
   const [navHeight, setNavHeight] = useState(0);
   const [activeFeature, setActiveFeature] = useState(0);
   const [activeSection, setActiveSection] = useState(null);
@@ -60,17 +56,6 @@ function Home() {
     },
   ];
 
-
-  useLayoutEffect(() => {
-    const nav = navRef.current;
-    if (!nav) return;
-    const ro = new ResizeObserver(() => {
-      setNavHeight(nav.offsetHeight);
-    });
-    ro.observe(nav);
-    return () => ro.disconnect();
-  }, []);
-
   useEffect(() => {
     const sectionIds = ["benefits", "features", "contact"];
     const observers = sectionIds.map((id) => {
@@ -84,7 +69,7 @@ function Home() {
             setActiveSection((prev) => (prev === id ? null : prev));
           }
         },
-        { threshold: 0.3 }
+        { threshold: 0.3 },
       );
       obs.observe(el);
       return obs;
@@ -94,65 +79,7 @@ function Home() {
 
   return (
     <div className="relative flex flex-col items-center bg-white px-4 pb-5 md:px-10">
-      {/* -- Top Navigation -- */}
-      <div
-        id="site-nav"
-        ref={navRef}
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 40,
-          backgroundColor: "white",
-          width: "100%",
-          maxWidth: 1500,
-          paddingTop: 20,
-          paddingBottom: 12,
-          justifyContent: "space-between",
-          alignItems: "center",
-          display: "flex",
-        }}
-      >
-        <div
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          style={{
-            color: "black",
-            fontSize: 30,
-            fontWeight: "500",
-            lineHeight: "36px",
-            cursor: "pointer",
-          }}
-        >
-          TerraFedLogo
-        </div>
-        <div
-          onClick={() => navigate("/contact")}
-          style={{
-            paddingLeft: 22,
-            paddingRight: 22,
-            paddingTop: 14,
-            paddingBottom: 14,
-            background: "#2A7AB3",
-            borderRadius: 1000,
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 4,
-            display: "flex",
-            cursor: "pointer",
-          }}
-        >
-          <div
-            style={{
-              color: "white",
-              fontSize: 14,
-              fontWeight: "700",
-              lineHeight: "19.6px",
-            }}
-          >
-            Book a Demo
-          </div>
-          <MdNorthEast style={{ color: "white", fontSize: 12 }} />
-        </div>
-      </div>
+      <Navbar onHeightChange={setNavHeight} activeSection={activeSection} />
 
       {/* Hero Header */}
       <div style={{ width: "100%", maxWidth: 1500 }}>
@@ -456,7 +383,10 @@ function Home() {
                         >
                           {/* Visible label */}
                           <motion.span
-                            style={{ display: "block", color: isOpen ? "#0FD12F" : "#6F6F6F" }}
+                            style={{
+                              display: "block",
+                              color: isOpen ? "#0FD12F" : "#6F6F6F",
+                            }}
                             variants={{
                               initial: { y: 0 },
                               hover: { y: "-100%" },
@@ -489,19 +419,26 @@ function Home() {
                           width="20"
                           height="20"
                           viewBox="0 0 24 24"
-                          style={{ color: isOpen ? "#0FD12F" : "#6F6F6F", flexShrink: 0 }}
+                          style={{
+                            color: isOpen ? "#0FD12F" : "#6F6F6F",
+                            flexShrink: 0,
+                          }}
                         >
                           {/* Horizontal bar — always visible */}
                           <line
-                            x1="5" y1="12"
-                            x2="19" y2="12"
+                            x1="5"
+                            y1="12"
+                            x2="19"
+                            y2="12"
                             stroke="currentColor"
                             strokeWidth="1.5"
                           />
                           {/* Vertical bar — rotates 90° to disappear when open */}
                           <motion.line
-                            x1="12" y1="5"
-                            x2="12" y2="19"
+                            x1="12"
+                            y1="5"
+                            x2="12"
+                            y2="19"
                             stroke="currentColor"
                             strokeWidth="1.5"
                             animate={{ rotate: isOpen ? 90 : 0 }}
@@ -729,8 +666,7 @@ function Home() {
             gap: 10,
             display: "flex",
           }}
-        >
-        </div>
+        ></div>
 
         {/* Contact / CTA */}
         <div
@@ -770,7 +706,8 @@ function Home() {
               textAlign: "center",
             }}
           >
-            Schedule a demo to see how TerraFed can help you understand and improve your soil health data.
+            Schedule a demo to see how TerraFed can help you understand and
+            improve your soil health data.
           </div>
           <div
             onClick={() => navigate("/contact")}
@@ -814,8 +751,20 @@ function Home() {
       >
         <div style={{ display: "flex", alignItems: "center", gap: 27 }}>
           {[
-            { label: "Benefits", action: () => document.getElementById("benefits")?.scrollIntoView({ behavior: "smooth" }) },
-            { label: "How It Works", action: () => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" }) },
+            {
+              label: "Benefits",
+              action: () =>
+                document
+                  .getElementById("benefits")
+                  ?.scrollIntoView({ behavior: "smooth" }),
+            },
+            {
+              label: "How It Works",
+              action: () =>
+                document
+                  .getElementById("features")
+                  ?.scrollIntoView({ behavior: "smooth" }),
+            },
             { label: "Contact", action: () => navigate("/contact") },
           ].map(({ label, action }) => (
             <div
@@ -854,71 +803,6 @@ function Home() {
         </div>
       </div>
 
-      {/* Floating Pill Nav */}
-      <div
-        style={{
-          paddingLeft: 24,
-          paddingRight: 24,
-          paddingTop: 20,
-          paddingBottom: 20,
-          left: "50%",
-          transform: "translateX(-50%)",
-          top: 16,
-          position: "fixed",
-          background: "rgba(255,255,255,0.40)",
-          overflow: "hidden",
-          borderRadius: 100,
-          backdropFilter: "blur(15px)",
-          justifyContent: "flex-start",
-          alignItems: "center",
-          gap: 27,
-          display: "inline-flex",
-          zIndex: 50,
-        }}
-      >
-        {[
-          { label: "Benefits", id: "benefits" },
-          { label: "How It Works", id: "features" },
-          { label: "Contact", id: null, path: "/contact" },
-        ].map(({ label, id, path }) => {
-          const isActive = id ? activeSection === id : false;
-          return (
-            <motion.div
-              key={label}
-              onClick={() =>
-                path ? navigate(path) : document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
-              }
-              style={{
-                position: "relative",
-                color: isActive ? "#0FD12F" : "black",
-                fontSize: 14,
-                fontWeight: "700",
-                lineHeight: "19.6px",
-                cursor: "pointer",
-                paddingBottom: 3,
-                transition: "color 0.25s ease",
-              }}
-            >
-              {label}
-              {/* Animated underline */}
-              <motion.span
-                style={{
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  height: 2,
-                  borderRadius: 2,
-                  background: "#0FD12F",
-                  display: "block",
-                }}
-                initial={false}
-                animate={{ width: isActive ? "100%" : "0%" }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-              />
-            </motion.div>
-          );
-        })}
-      </div>
     </div>
   );
 }
