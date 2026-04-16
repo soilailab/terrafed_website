@@ -66,7 +66,7 @@ export default function SoilHero({ navHeight = 0 }) {
       </div>
 
       {/* Vignette overlay */}
-      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-b from-black/30 via-black/10 to-black/50" />
+      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-b from-black/30 via-black/10 to-black/50 rounded-[2rem]" />
 
       {/* Hero text — pointer-events-none so it doesn't block canvas interaction */}
       <div className="pointer-events-none relative z-20 flex h-full w-full items-center justify-center px-6">

@@ -125,6 +125,7 @@ function Home() {
           TerraFedLogo
         </div>
         <div
+          onClick={() => navigate("/contact")}
           style={{
             paddingLeft: 22,
             paddingRight: 22,
@@ -147,7 +148,7 @@ function Home() {
               lineHeight: "19.6px",
             }}
           >
-            Learn More
+            Book a Demo
           </div>
           <MdNorthEast style={{ color: "white", fontSize: 12 }} />
         </div>
@@ -772,6 +773,7 @@ function Home() {
             Schedule a demo to see how TerraFed can help you understand and improve your soil health data.
           </div>
           <div
+            onClick={() => navigate("/contact")}
             style={{
               alignSelf: "stretch",
               paddingLeft: 22,

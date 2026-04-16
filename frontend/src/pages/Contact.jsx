@@ -4,6 +4,9 @@ import { MdNorthEast } from "react-icons/md";
 
 function Contact() {
   const navigate = useNavigate();
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+  const isLocalHost =
+    typeof window !== "undefined" && ["localhost", "127.0.0.1"].includes(window.location.hostname);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -13,12 +16,13 @@ function Contact() {
   });
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function handleChange(e) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
       setError("Please fill in all required fields.");
@@ -29,8 +33,50 @@ function Contact() {
       setError("Please enter a valid email address.");
       return;
     }
+
     setError("");
-    setSubmitted(true);
+    setIsSubmitting(true);
+
+    try {
+      if (apiBaseUrl) {
+        const response = await fetch(`${apiBaseUrl}/api/contact`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(form),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || "Failed to send message.");
+        }
+      } else if (!isLocalHost) {
+        const response = await fetch("/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            "form-name": "contact",
+            ...form,
+          }).toString(),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to submit the contact form.");
+        }
+      } else {
+        throw new Error("Set the API base URL for local testing, or deploy on Netlify to use Netlify Forms.");
+      }
+
+      setSubmitted(true);
+    } catch (err) {
+      setError(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   const inputStyle = {
@@ -154,7 +200,15 @@ function Contact() {
         }}
       >
         {/* Header */}
-        <div style={{ flexDirection: "column", gap: 20, display: "flex" }}>
+        <div style={{ 
+          alignSelf: "stretch",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          textAlign: "center",
+          gap: 20,
+          display: "flex",
+        }}>
           <div
             style={{
               color: "#0FD12F",
@@ -243,10 +297,16 @@ function Contact() {
         ) : (
           /* Form */
           <form
+            name="contact"
+            method="POST"
+            data-netlify="true"
+            data-netlify-honeypot="bot-field"
             onSubmit={handleSubmit}
             noValidate
             style={{ flexDirection: "column", gap: 24, display: "flex" }}
           >
+            <input type="hidden" name="form-name" value="contact" />
+            <input type="hidden" name="bot-field" />
             {/* Name + Email row */}
             <div
               style={{
@@ -298,7 +358,7 @@ function Contact() {
                 <input
                   name="organization"
                   type="text"
-                  placeholder="AgriAdapt Ltd."
+                  placeholder="TerraFed"
                   value={form.organization}
                   onChange={handleChange}
                   style={inputStyle}
@@ -361,6 +421,7 @@ function Contact() {
             <div>
               <button
                 type="submit"
+                disabled={isSubmitting}
                 style={{
                   paddingLeft: 28,
                   paddingRight: 28,
@@ -369,7 +430,8 @@ function Contact() {
                   background: "#0FD12F",
                   borderRadius: 1000,
                   border: "none",
-                  cursor: "pointer",
+                  cursor: isSubmitting ? "not-allowed" : "pointer",
+                  opacity: isSubmitting ? 0.7 : 1,
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 6,
@@ -377,7 +439,7 @@ function Contact() {
                 }}
               >
                 <span style={{ color: "white", fontSize: 14, fontWeight: "700" }}>
-                  Send Message
+                  {isSubmitting ? "Sending..." : "Send Message"}
                 </span>
                 <MdNorthEast style={{ color: "white", fontSize: 14 }} />
               </button>
