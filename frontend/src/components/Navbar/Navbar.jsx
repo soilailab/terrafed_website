@@ -1,7 +1,9 @@
+
 import { useLayoutEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MdNorthEast } from "react-icons/md";
+import logoPng from "../../assets/logo.png";
 
 const navLinks = [
   { label: "Benefits", path: "/#benefits", sectionId: "benefits" },
@@ -14,7 +16,6 @@ function Navbar({
   activeSection,
   ctaLabel = "Book a Demo",
   ctaPath = "/contact",
-  logoText = "TerraFedLogo",
 }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,6 +33,7 @@ function Navbar({
 
     const ro = new ResizeObserver(updateHeight);
     ro.observe(nav);
+
     return () => ro.disconnect();
   }, [onHeightChange]);
 
@@ -61,11 +63,15 @@ function Navbar({
       const id = path.slice(2);
 
       if (location.pathname === "/") {
-        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+        document.getElementById(id)?.scrollIntoView({
+          behavior: "smooth",
+        });
       } else {
         navigate("/");
         setTimeout(() => {
-          document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+          document.getElementById(id)?.scrollIntoView({
+            behavior: "smooth",
+          });
         }, 100);
       }
       return;
@@ -80,6 +86,7 @@ function Navbar({
 
   const currentSection =
     location.pathname === "/contact" ? "contact" : activeSection;
+
   const hideCta = location.pathname === "/contact";
 
   return (
@@ -100,19 +107,40 @@ function Navbar({
         display: "flex",
       }}
     >
+      {/* TerraFed Logo */}
       <div
         onClick={handleLogoClick}
+        role="link"
+        tabIndex={0}
+        aria-label="TerraFed - Return to homepage"
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleLogoClick();
+          }
+        }}
         style={{
-          color: "black",
-          fontSize: 30,
-          fontWeight: "500",
-          lineHeight: "36px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-start",
           cursor: "pointer",
+          flexShrink: 0,
         }}
       >
-        {logoText}
+        <img
+          src={logoPng}
+          alt="TerraFed"
+          style={{
+            height: 36,
+            width: "auto",
+            maxWidth: 220,
+            objectFit: "contain",
+            display: "block",
+          }}
+        />
       </div>
 
+      {/* Navigation Links */}
       <div
         style={{
           position: "absolute",
@@ -151,6 +179,7 @@ function Navbar({
               }}
             >
               {label}
+
               <motion.span
                 style={{
                   position: "absolute",
@@ -163,13 +192,17 @@ function Navbar({
                 }}
                 initial={{ width: 0 }}
                 animate={{ width: isActive ? "100%" : "0%" }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
+                transition={{
+                  duration: 0.3,
+                  ease: "easeInOut",
+                }}
               />
             </div>
           );
         })}
       </div>
 
+      {/* CTA Button */}
       <div
         onClick={hideCta ? undefined : handleCtaClick}
         aria-hidden={hideCta}
@@ -199,7 +232,13 @@ function Navbar({
         >
           {ctaLabel}
         </div>
-        <MdNorthEast style={{ color: "white", fontSize: 12 }} />
+
+        <MdNorthEast
+          style={{
+            color: "white",
+            fontSize: 12,
+          }}
+        />
       </div>
     </div>
   );
