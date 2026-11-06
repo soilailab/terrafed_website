@@ -5,11 +5,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { MdNorthEast } from "react-icons/md";
 import logoPng from "../../assets/logo.png";
 
-// Add Evidence and Partners here once their corresponding homepage sections exist.
-// Do not expose links to IDs that have not been implemented yet.
 const navLinks = [
   { label: "Product", path: "/#product", sectionId: "product" },
   { label: "Workflow", path: "/#features", sectionId: "features" },
+  { label: "Evidence", path: "/#evidence", sectionId: "evidence" },
+  { label: "Partners", path: "/#partners", sectionId: "partners" },
   { label: "Contact", path: "/contact", sectionId: "contact" },
 ];
 
@@ -169,6 +169,11 @@ function Navbar({
             <button
               key={label}
               type="button"
+              className={
+                sectionId === "evidence" || sectionId === "partners"
+                  ? "hidden xl:inline-block"
+                  : undefined
+              }
               onClick={() => handlePathClick(path)}
               aria-current={isActive ? "location" : undefined}
               style={{

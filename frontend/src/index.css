@@ -11,14 +11,22 @@
 }
 
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
+  --terra-navy: #0C2431;
+  --terra-green: #13C65B;
+  --terra-brand-green: #00B029;
+  --terra-blue: #2F86B7;
+  --terra-uncertainty-amber: #F3A73B;
+  --terra-off-white: #F5F8F7;
+  --terra-muted: #435B66;
+
+  --text: #435B66;
+  --text-h: #0C2431;
   --bg: #fff;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
+  --accent: #13C65B;
+  --accent-bg: rgba(19, 198, 91, 0.10);
+  --accent-border: rgba(19, 198, 91, 0.5);
   --social-bg: rgba(244, 243, 236, 0.5);
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
@@ -30,7 +38,7 @@
   font-family: 'Inter', var(--sans);
   font: 18px/145% 'Inter', var(--sans);
   letter-spacing: 0.18px;
-  color-scheme: light dark;
+  color-scheme: light;
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
@@ -43,25 +51,6 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
 
 body {
   margin: 0;
@@ -126,4 +115,77 @@ code {
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
+}
+
+/* Mobile-accessible workflow and asset placeholders. Map labels stay outside screenshots. */
+.terrafed-workflow-panel {
+  width: 100%;
+}
+
+.terrafed-workflow-accordion {
+  min-width: 0;
+}
+
+.terrafed-workflow-media {
+  min-width: 0;
+}
+
+.terrafed-media-placeholder {
+  width: 100%;
+  min-height: 250px;
+  aspect-ratio: 16 / 9;
+  border: 1px dashed #92B8B2;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #F5F8F7 0%, #EAF4F2 100%);
+  color: #0C2431;
+  padding: clamp(16px, 4vw, 36px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  gap: 12px;
+}
+
+.terrafed-media-status {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 700;
+  border-radius: 999px;
+  color: #65420E;
+  background: #FFF2D7;
+  border: 1px solid #F3A73B;
+}
+
+.terrafed-map-description {
+  overflow-wrap: anywhere;
+  line-height: 1.55;
+  font-size: clamp(13px, 2vw, 15px);
+  color: #435B66;
+}
+
+@media (max-width: 1023px) {
+  .terrafed-workflow-panel {
+    flex-direction: column;
+  }
+
+  .terrafed-workflow-accordion,
+  .terrafed-workflow-media {
+    flex-basis: auto !important;
+    max-width: none !important;
+    width: 100%;
+  }
+
+  .terrafed-workflow-media {
+    height: auto !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .terrafed-workflow-panel *,
+  .terrafed-media-placeholder * {
+    scroll-behavior: auto !important;
+  }
 }
