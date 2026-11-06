@@ -83,7 +83,16 @@ function Home() {
 
       {/* Hero Header */}
       <div style={{ width: "100%", maxWidth: 1500 }}>
-        <SoilHero navHeight={navHeight} />
+        <SoilHero
+          navHeight={navHeight}
+          onExploreWorkflow={() =>
+            document.getElementById("features")?.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            })
+          }
+          onDiscussPilot={() => navigate("/contact")}
+        />
       </div>
       <div style={{ paddingBottom: 60 }} />
 

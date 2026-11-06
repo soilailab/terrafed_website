@@ -5,6 +5,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { MdNorthEast } from "react-icons/md";
 import logoPng from "../../assets/logo.png";
 
+// Add Evidence and Partners here once their corresponding homepage sections exist.
+// Do not expose links to IDs that have not been implemented yet.
 const navLinks = [
   { label: "Product", path: "/#product", sectionId: "product" },
   { label: "Workflow", path: "/#features", sectionId: "features" },
@@ -14,7 +16,7 @@ const navLinks = [
 function Navbar({
   onHeightChange,
   activeSection,
-  ctaLabel = "Request Pilot Access",
+  ctaLabel = "Discuss a Pilot",
   ctaPath = "/contact",
 }) {
   const navigate = useNavigate();
@@ -164,17 +166,23 @@ function Navbar({
           const isActive = currentSection === sectionId;
 
           return (
-            <div
+            <button
               key={label}
+              type="button"
               onClick={() => handlePathClick(path)}
+              aria-current={isActive ? "location" : undefined}
               style={{
                 position: "relative",
                 color: isActive ? "#0FD12F" : "black",
                 fontSize: 14,
+                fontFamily: "inherit",
                 fontWeight: "700",
                 lineHeight: "19.6px",
                 cursor: "pointer",
+                padding: 0,
                 paddingBottom: 4,
+                border: "none",
+                background: "transparent",
                 transition: "color 0.25s ease",
               }}
             >
@@ -197,20 +205,24 @@ function Navbar({
                   ease: "easeInOut",
                 }}
               />
-            </div>
+            </button>
           );
         })}
       </div>
 
       {/* CTA Button */}
-      <div
+      <button
+        type="button"
         onClick={hideCta ? undefined : handleCtaClick}
+        disabled={hideCta}
         aria-hidden={hideCta}
         style={{
           paddingLeft: 22,
           paddingRight: 22,
           paddingTop: 14,
           paddingBottom: 14,
+          border: "none",
+          fontFamily: "inherit",
           background: "#2A7AB3",
           borderRadius: 1000,
           justifyContent: "center",
@@ -239,7 +251,7 @@ function Navbar({
             fontSize: 12,
           }}
         />
-      </div>
+      </button>
     </div>
   );
 }

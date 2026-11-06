@@ -6,7 +6,11 @@ import SoilHeroScene from "./SoilHeroScene";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function SoilHero({ navHeight = 0 }) {
+export default function SoilHero({
+  navHeight = 0,
+  onExploreWorkflow,
+  onDiscussPilot,
+}) {
   const sectionRef = useRef(null);
   const progressRef = useRef(0);
   const mouseRef = useRef({ x: 0.5, y: 0.5 });
@@ -95,15 +99,33 @@ export default function SoilHero({ navHeight = 0 }) {
       {/* Hero text — pointer-events-none so it doesn't block canvas interaction */}
       <div className="pointer-events-none relative z-20 flex h-full w-full items-center justify-center px-6">
         <div className="mx-auto max-w-5xl text-center text-white">
-          <p className="mb-4 text-sm uppercase tracking-[0.3em] text-white/70">
-            Welcome to
+          <p className="mb-4 text-sm uppercase tracking-[0.3em] text-white">
+            PRIVACY-PRESERVING SOIL INTELLIGENCE
           </p>
           <h1 className="text-5xl font-semibold leading-none sm:text-7xl md:text-8xl">
             TerraFed
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-white/75 sm:text-lg">
-            Soil Intelligence Mapping powered by AI.
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-white sm:text-md">
+            Shared soil intelligence. Locally adapted. Privacy governed.
           </p>
+
+          {/* Keep the WebGL background non-interactive without blocking these CTAs. */}
+          <div className="pointer-events-auto mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={onExploreWorkflow}
+              className="inline-flex w-full items-center justify-center rounded-full bg-[#00B029] px-7 py-3.5 text-sm font-semibold text-[#062314] transition-colors duration-200 hover:bg-[#18CF43] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:w-auto"
+            >
+              Explore the Workflow
+            </button>
+            <button
+              type="button"
+              onClick={onDiscussPilot}
+              className="inline-flex w-full items-center justify-center rounded-full border border-white/80 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white hover:text-[#0C2431] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:w-auto"
+            >
+              Discuss a Pilot
+            </button>
+          </div>
         </div>
       </div>
     </section>
