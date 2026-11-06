@@ -167,7 +167,7 @@ function Contact() {
               lineHeight: "1em",
             }}
           >
-            Book a demo or ask us anything.
+            Request pilot access or ask us anything.
           </div>
           <div
             style={{
@@ -407,8 +407,8 @@ function Contact() {
       >
         <div style={{ display: "flex", alignItems: "center", gap: 27 }}>
           {[
-            { label: "Benefits", path: "/#benefits" },
-            { label: "How It Works", path: "/#features" },
+            { label: "Product", path: "/#product" },
+            { label: "Workflow", path: "/#features" },
             { label: "Contact", path: "/contact" },
           ].map(({ label, path }) => (
             <div

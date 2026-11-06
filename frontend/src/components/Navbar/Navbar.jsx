@@ -6,15 +6,15 @@ import { MdNorthEast } from "react-icons/md";
 import logoPng from "../../assets/logo.png";
 
 const navLinks = [
-  { label: "Benefits", path: "/#benefits", sectionId: "benefits" },
-  { label: "How It Works", path: "/#features", sectionId: "features" },
+  { label: "Product", path: "/#product", sectionId: "product" },
+  { label: "Workflow", path: "/#features", sectionId: "features" },
   { label: "Contact", path: "/contact", sectionId: "contact" },
 ];
 
 function Navbar({
   onHeightChange,
   activeSection,
-  ctaLabel = "Book a Demo",
+  ctaLabel = "Request Pilot Access",
   ctaPath = "/contact",
 }) {
   const navigate = useNavigate();

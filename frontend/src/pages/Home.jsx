@@ -57,7 +57,7 @@ function Home() {
   ];
 
   useEffect(() => {
-    const sectionIds = ["benefits", "features", "contact"];
+    const sectionIds = ["product", "features", "contact"];
     const observers = sectionIds.map((id) => {
       const el = document.getElementById(id);
       if (!el) return null;
@@ -97,9 +97,9 @@ function Home() {
           display: "flex",
         }}
       >
-        {/* Benefits Section */}
+        {/* Product Section */}
         <div
-          id="benefits"
+          id="product"
           style={{
             width: "100%",
             maxWidth: 1500,
@@ -165,14 +165,12 @@ function Home() {
                   lineHeight: "21px",
                 }}
               >
-                TerraFed tackles the biggest obstacle for providing accurate
-                soil analytics to growers and land managers: data privacy. The
-                app's design is developed to be easy-to-use, handling processing
-                and machine-learning infrastructure in an automated environment,
-                delivering field maps with SOC estimates without exposing raw
-                satellite data or proprietary algorithms. This approach allows
-                users to gain critical insights into soil health while ensuring
-                that sensitive data remains secure and private.
+                Organizations need locally relevant soil models, but valuable observations are
+                often distributed across customers, programs, and operating regions. TerraFed
+                provides a privacy-governed framework for starting from shared model
+                knowledge, adapting with local evidence, and improving predictions without
+                requiring every partner to pool raw observations. The result is a clearer path
+                from a first estimate to a continuously improving local model.
               </div>
             </div>
             <div
@@ -727,7 +725,7 @@ function Home() {
             }}
           >
             <div style={{ color: "white", fontSize: 14, fontWeight: "700" }}>
-              Book a Demo
+              Request Pilot Access
             </div>
             <MdNorthEast style={{ color: "white", fontSize: 12 }} />
           </div>
@@ -752,14 +750,14 @@ function Home() {
         <div style={{ display: "flex", alignItems: "center", gap: 27 }}>
           {[
             {
-              label: "Benefits",
+              label: "Product",
               action: () =>
                 document
-                  .getElementById("benefits")
+                  .getElementById("product")
                   ?.scrollIntoView({ behavior: "smooth" }),
             },
             {
-              label: "How It Works",
+              label: "Workflow",
               action: () =>
                 document
                   .getElementById("features")
