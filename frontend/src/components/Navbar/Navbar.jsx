@@ -1,5 +1,4 @@
-
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MdNorthEast } from "react-icons/md";
@@ -16,12 +15,13 @@ const navLinks = [
 function Navbar({
   onHeightChange,
   activeSection,
-  ctaLabel = "Discuss a Pilot",
+  ctaLabel = "Pilot Program",
   ctaPath = "/contact",
 }) {
   const navigate = useNavigate();
   const location = useLocation();
   const navRef = useRef(null);
+  const [hoveredSection, setHoveredSection] = useState(null);
 
   useLayoutEffect(() => {
     const nav = navRef.current;
@@ -164,6 +164,7 @@ function Navbar({
       >
         {navLinks.map(({ label, path, sectionId }) => {
           const isActive = currentSection === sectionId;
+          const isHighlighted = isActive || hoveredSection === sectionId;
 
           return (
             <button
@@ -175,10 +176,14 @@ function Navbar({
                   : undefined
               }
               onClick={() => handlePathClick(path)}
+              onMouseEnter={() => setHoveredSection(sectionId)}
+              onMouseLeave={() => setHoveredSection(null)}
+              onFocus={() => setHoveredSection(sectionId)}
+              onBlur={() => setHoveredSection(null)}
               aria-current={isActive ? "location" : undefined}
               style={{
                 position: "relative",
-                color: isActive ? "#0FD12F" : "black",
+                color: isHighlighted ? "#0FD12F" : "black",
                 fontSize: 14,
                 fontFamily: "inherit",
                 fontWeight: "700",
@@ -194,21 +199,22 @@ function Navbar({
               {label}
 
               <motion.span
+                aria-hidden="true"
                 style={{
                   position: "absolute",
                   bottom: 0,
                   left: 0,
+                  width: "100%",
                   height: 2,
                   borderRadius: 2,
                   background: "#0FD12F",
                   display: "block",
+                  transformOrigin: "left center",
+                  pointerEvents: "none",
                 }}
-                initial={{ width: 0 }}
-                animate={{ width: isActive ? "100%" : "0%" }}
-                transition={{
-                  duration: 0.3,
-                  ease: "easeInOut",
-                }}
+                initial={false}
+                animate={{ scaleX: isHighlighted ? 1 : 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
               />
             </button>
           );
@@ -228,7 +234,7 @@ function Navbar({
           paddingBottom: 14,
           border: "none",
           fontFamily: "inherit",
-          background: "#2A7AB3",
+          background: "#008CD8",
           borderRadius: 1000,
           justifyContent: "center",
           alignItems: "center",

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdNorthEast } from "react-icons/md";
 import Navbar from "../components/Navbar/Navbar";
+import Footer from "../components/Footer/Footer";
 
 function Contact() {
   const navigate = useNavigate();
@@ -390,74 +391,7 @@ function Contact() {
         )}
       </div>
 
-      {/* Footer */}
-      <div
-        style={{
-          width: "100%",
-          maxWidth: 1500,
-          paddingTop: 40,
-          paddingBottom: 20,
-          borderTop: "1px #E9E9E9 solid",
-          justifyContent: "space-between",
-          alignItems: "center",
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 12,
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 27 }}>
-          {[
-            { label: "Product", path: "/#product" },
-            { label: "Workflow", path: "/#features" },
-            { label: "Contact", path: "/contact" },
-          ].map(({ label, path }) => (
-            <div
-              key={label}
-              onClick={() => {
-                if (path.startsWith("/#")) {
-                  navigate("/");
-                  setTimeout(() => {
-                    const id = path.slice(2);
-                    document
-                      .getElementById(id)
-                      ?.scrollIntoView({ behavior: "smooth" });
-                  }, 100);
-                } else {
-                  navigate(path);
-                }
-              }}
-              style={{
-                color: "black",
-                fontSize: 14,
-                fontWeight: "700",
-                lineHeight: "19.6px",
-                cursor: "pointer",
-              }}
-            >
-              {label}
-            </div>
-          ))}
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ color: "#0FD12F", fontSize: 12, fontWeight: "400" }}>
-            TerraFed 2026
-          </div>
-          <div style={{ color: "#6F6F6F", fontSize: 12 }}>|</div>
-          <div style={{ color: "#0FD12F", fontSize: 12, fontWeight: "400" }}>
-            <a
-              href="https://innovate.research.ufl.edu/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              UF Innovate
-            </a>
-          </div>
-          <div style={{ color: "#6F6F6F", fontSize: 12 }}>|</div>
-          <div style={{ color: "#111111", fontSize: 12, fontWeight: "400" }}>
-            All Rights Reserved
-          </div>
-        </div>
-      </div>
+      <Footer />
     </div>
   );
 }

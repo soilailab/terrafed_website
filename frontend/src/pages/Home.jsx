@@ -12,8 +12,8 @@ import {
 } from "react-icons/md";
 import SoilHero from "../components/SoilHero";
 import Navbar from "../components/Navbar/Navbar";
+import Footer from "../components/Footer/Footer";
 import { mediaAssets } from "../data/mediaAssets";
-
 const screenModules = import.meta.glob("../assets/examplescreens/screen*.png", {
   eager: true,
   import: "default",
@@ -21,13 +21,15 @@ const screenModules = import.meta.glob("../assets/examplescreens/screen*.png", {
 const screens = Object.keys(screenModules)
   .sort()
   .map((k) => screenModules[k]);
+// Shared vertical rhythm across the homepage's five content sections.
+const SECTION_TOP_PADDING = "clamp(45px, 5vw, 65px)";
+const SECTION_GAP = "clamp(40px, 5vw, 72px)";
 
 function Home() {
   const navigate = useNavigate();
   const [navHeight, setNavHeight] = useState(0);
   const [activeFeature, setActiveFeature] = useState(0);
   const [activeSection, setActiveSection] = useState(null);
-
   const featureItems = [
     {
       num: "01 | Define Your Area",
@@ -35,25 +37,32 @@ function Home() {
       img: screens[0],
       imageAlt: "Existing TerraFed dashboard showing a selected field boundary",
       imageCaption: "Existing dashboard view: area-of-interest selection.",
-      mapDetails: "Field boundary shown. No soil-property prediction is displayed in this view.",
+      mapDetails:
+        "Field boundary shown. No soil-property prediction is displayed in this view.",
       status: "Demonstrated",
     },
     {
       num: "02 | Prepare Earth-Observation Inputs",
       text: "Review available Sentinel-2 observations and prepare a valid bare-soil or multi-date input while filtering clouds, vegetation, and unusable pixels.",
       img: screens[1],
-      imageAlt: "Existing TerraFed dashboard showing satellite imagery for a selected area",
-      imageCaption: "Existing dashboard imagery; automated quality filtering is not shown.",
-      mapDetails: "Observation imagery shown. Cloud, vegetation and bare-soil filtering are not verified by this screenshot.",
+      imageAlt:
+        "Existing TerraFed dashboard showing satellite imagery for a selected area",
+      imageCaption:
+        "Existing dashboard imagery; automated quality filtering is not shown.",
+      mapDetails:
+        "Observation imagery shown. Cloud, vegetation and bare-soil filtering are not verified by this screenshot.",
       status: "Prototype",
     },
     {
       num: "03 | Generate a Baseline Soil Map",
       text: "Apply pre-trained model knowledge to generate a first-pass map for the selected soil property. Display the prediction together with model version, data coverage, and uncertainty.",
       img: screens[2],
-      imageAlt: "Existing TerraFed dashboard showing a global-model soil-property prediction map",
-      imageCaption: "Existing global-model prediction; uncertainty and model provenance are not pictured.",
-      mapDetails: "Prediction layer shown. Model-version, coverage and uncertainty overlays are not verified in this view.",
+      imageAlt:
+        "Existing TerraFed dashboard showing a global-model soil-property prediction map",
+      imageCaption:
+        "Existing global-model prediction; uncertainty and model provenance are not pictured.",
+      mapDetails:
+        "Prediction layer shown. Model-version, coverage and uncertainty overlays are not verified in this view.",
       secondaryMediaSlot: mediaAssets.uncertaintyMap,
       status: "Prototype",
     },
@@ -62,8 +71,10 @@ function Home() {
       text: "Add local soil measurements to evaluate and improve a partner-specific model. Compare baseline and adapted performance while sensitive observations remain under the partner's control.",
       img: null,
       mediaSlot: mediaAssets.localAdaptationComparison,
-      imageCaption: "Local-adaptation comparison screenshot has not yet been supplied.",
-      mapDetails: "No local performance comparison is shown. Only explicitly approved model information may contribute to a wider system.",
+      imageCaption:
+        "Local-adaptation comparison screenshot has not yet been supplied.",
+      mapDetails:
+        "No local performance comparison is shown. Only explicitly approved model information may contribute to a wider system.",
       status: "Planned",
     },
     {
@@ -71,37 +82,70 @@ function Home() {
       text: "Set a sampling budget, prioritize locations using uncertainty and coverage, and export the map, recommended points, assumptions, and model provenance for the next monitoring cycle.",
       img: null,
       mediaSlot: mediaAssets.recommendedSamplingPlan,
-      imageCaption: "Verified sampling recommendations and plan-export visuals are not yet available.",
-      mapDetails: "No ranked sampling locations or numerical sampling results are shown.",
+      imageCaption:
+        "Verified sampling recommendations and plan-export visuals are not yet available.",
+      mapDetails:
+        "No ranked sampling locations or numerical sampling results are shown.",
       status: "Planned",
     },
   ];
-
   useEffect(() => {
-    const sectionIds = ["product", "features", "evidence", "partners", "contact"];
-    const observers = sectionIds.map((id) => {
-      const el = document.getElementById(id);
-      if (!el) return null;
-      const obs = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setActiveSection(id);
-          } else {
-            setActiveSection((prev) => (prev === id ? null : prev));
-          }
-        },
-        { threshold: 0.3 },
-      );
-      obs.observe(el);
-      return obs;
-    });
-    return () => observers.forEach((obs) => obs?.disconnect());
-  }, []);
+    const sectionIds = [
+      "product",
+      "features",
+      "evidence",
+      "partners",
+      "contact",
+    ];
+    let animationFrame = null;
 
+    // One active section at a time. The section whose top has most recently
+    // passed the activation line stays active across the whitespace between sections.
+    const updateActiveSection = () => {
+      animationFrame = null;
+      const activationLine =
+        navHeight + Math.min(120, window.innerHeight * 0.18);
+      let nextSection = null;
+
+      for (const id of sectionIds) {
+        const section = document.getElementById(id);
+        if (section && section.getBoundingClientRect().top <= activationLine) {
+          nextSection = id;
+        }
+      }
+
+      // The last section can be shorter than the viewport.
+      if (
+        window.scrollY + window.innerHeight >=
+        document.documentElement.scrollHeight - 6
+      ) {
+        nextSection = "contact";
+      }
+
+      setActiveSection((previous) =>
+        previous === nextSection ? previous : nextSection,
+      );
+    };
+
+    const scheduleUpdate = () => {
+      if (animationFrame === null) {
+        animationFrame = window.requestAnimationFrame(updateActiveSection);
+      }
+    };
+
+    updateActiveSection();
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
+
+    return () => {
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+      if (animationFrame !== null) window.cancelAnimationFrame(animationFrame);
+    };
+  }, [navHeight]);
   return (
     <div className="relative flex flex-col items-center bg-white px-4 pb-5 md:px-10">
       <Navbar onHeightChange={setNavHeight} activeSection={activeSection} />
-
       {/* Hero Header */}
       <div style={{ width: "100%", maxWidth: 1500 }}>
         <SoilHero
@@ -118,7 +162,6 @@ function Home() {
         />
       </div>
       <div style={{ paddingBottom: 24 }} />
-
       {/* Main */}
       <div
         style={{
@@ -127,6 +170,7 @@ function Home() {
           justifyContent: "flex-start",
           alignItems: "center",
           display: "flex",
+          rowGap: SECTION_GAP,
         }}
       >
         {/* Product Section */}
@@ -135,7 +179,7 @@ function Home() {
           style={{
             width: "100%",
             maxWidth: 1500,
-            paddingTop: "clamp(45px, 5vw, 78px)",
+            paddingTop: SECTION_TOP_PADDING,
             paddingBottom: "clamp(50px, 6vw, 86px)",
             flexDirection: "column",
             justifyContent: "flex-start",
@@ -194,33 +238,36 @@ function Home() {
                 style={{
                   alignSelf: "stretch",
                   color: "#435B66",
-                  maxWidth: "72ch",
+                  maxWidth: "100ch",
                   textAlign: "left",
                   fontSize: 16,
                   fontWeight: "400",
                   lineHeight: "1.7",
                 }}
               >
-                Organizations need locally relevant soil models, but valuable observations are
-                often distributed across customers, programs, and operating regions. TerraFed
-                provides a privacy-governed framework for starting from shared model
-                knowledge, adapting with local evidence, and improving predictions without
-                requiring every partner to pool raw observations. The result is a clearer path
-                from a first estimate to a continuously improving local model.
+                Organizations need locally relevant soil models, but valuable
+                observations are often distributed across customers, programs,
+                and operating regions. TerraFed provides a privacy-governed
+                framework for starting from shared model knowledge, adapting
+                with local evidence, and improving predictions without requiring
+                every partner to pool raw observations. The result is a clearer
+                path from a first estimate to a continuously improving local
+                model.
               </div>
               <p
                 style={{
-                  maxWidth: "72ch",
+                  maxWidth: "110ch",
                   color: "#435B66",
                   fontSize: 14,
                   lineHeight: 1.6,
                   textAlign: "left",
                 }}
               >
-                Sensitive local soil observations, operational data, customer data,
-                and partner workflows remain governed by their data holders. Only
-                explicitly approved model information may contribute to shared knowledge.
-                Public Sentinel-2 imagery is not treated as private data.
+                Sensitive local soil observations, operational data, customer
+                data, and partner workflows remain governed by their data
+                holders. Only explicitly approved model information may
+                contribute to shared knowledge. Public Sentinel-2 imagery is not
+                treated as private data.
               </p>
             </div>
             <div
@@ -277,19 +324,46 @@ function Home() {
                     display: "inline-flex",
                   }}
                 >
-                  <div style={{ color: "#2F86B7" }}>{item.icon}</div>
-                  <span
+                  <div
                     style={{
-                      borderRadius: 999,
-                      padding: "4px 10px",
-                      background: item.status === "Demonstrated" ? "#E7F7ED" : "#FFF2D7",
-                      color: item.status === "Demonstrated" ? "#13613C" : "#65420E",
-                      fontSize: 12,
-                      fontWeight: 700,
+                      alignSelf: "stretch",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: 12,
                     }}
                   >
-                    {item.status}
-                  </span>
+                    <div
+                      style={{
+                        color: "#008CD8",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      {item.icon}
+                    </div>
+                    <span
+                      style={{
+                        marginLeft: "auto",
+                        flexShrink: 0,
+                        borderRadius: 999,
+                        padding: "4px 10px",
+                        filter: "drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.1))",
+                        background:
+                          item.status === "Demonstrated"
+                            ? "#E7F7ED"
+                            : "#FFF2D7",
+                        color:
+                          item.status === "Demonstrated"
+                            ? "#13613C"
+                            : "#65420E",
+                        fontSize: 12,
+                        fontWeight: 700,
+                      }}
+                    >
+                      {item.status}
+                    </span>
+                  </div>
                   <div
                     style={{
                       alignSelf: "stretch",
@@ -304,6 +378,7 @@ function Home() {
                         fontSize: 18,
                         fontWeight: "400",
                         lineHeight: "18px",
+                        textAlign: "left",
                       }}
                     >
                       {item.title}
@@ -314,6 +389,7 @@ function Home() {
                         fontSize: 15,
                         fontWeight: "400",
                         lineHeight: "21px",
+                        textAlign: "left",
                       }}
                     >
                       {item.desc}
@@ -324,7 +400,6 @@ function Home() {
             </div>
           </div>
         </div>
-
         {/* App Features Section */}
         <div
           id="features"
@@ -332,7 +407,7 @@ function Home() {
             width: "100%",
             maxWidth: 1500,
             paddingBottom: "clamp(55px, 6vw, 90px)",
-            paddingTop: "clamp(55px, 6vw, 90px)",
+            paddingTop: SECTION_TOP_PADDING,
             borderTop: "1px #E9E9E9 solid",
             flexDirection: "column",
             alignItems: "flex-start",
@@ -350,7 +425,7 @@ function Home() {
               display: "flex",
               textAlign: "left",
               marginTop: 0,
-              maxWidth: "72ch",
+              maxWidth: "150ch",
             }}
           >
             <div
@@ -369,7 +444,7 @@ function Home() {
                 fontSize: 16,
                 fontWeight: "400",
                 lineHeight: "1.65",
-                maxWidth: "68ch",
+                maxWidth: "150ch",
               }}
             >
               TerraFed connects Earth observation, local measurements,
@@ -491,7 +566,6 @@ function Home() {
                             {item.num}
                           </motion.span>
                         </div>
-
                         {/* ExpandIcon — + morphs to − on open */}
                         <motion.svg
                           width="20"
@@ -526,7 +600,6 @@ function Home() {
                           />
                         </motion.svg>
                       </div>
-
                       {/* Expanded body — true height: auto animation */}
                       <AnimatePresence initial={false}>
                         {isOpen && (
@@ -558,9 +631,18 @@ function Home() {
                                     display: "inline-flex",
                                     padding: "5px 10px",
                                     borderRadius: 999,
-                                    background: item.status === "Demonstrated" ? "#E7F7ED" : "#FFF2D7",
-                                    border: item.status === "Demonstrated" ? "1px solid #BDE5C7" : "1px solid #F3A73B",
-                                    color: item.status === "Demonstrated" ? "#13613C" : "#65420E",
+                                    background:
+                                      item.status === "Demonstrated"
+                                        ? "#E7F7ED"
+                                        : "#FFF2D7",
+                                    border:
+                                      item.status === "Demonstrated"
+                                        ? "1px solid #BDE5C7"
+                                        : "1px solid #F3A73B",
+                                    color:
+                                      item.status === "Demonstrated"
+                                        ? "#13613C"
+                                        : "#65420E",
                                     fontSize: 12,
                                     fontWeight: 700,
                                   }}
@@ -572,7 +654,6 @@ function Home() {
                           </motion.div>
                         )}
                       </AnimatePresence>
-
                       {/* Hover underline sweep (from repo) */}
                       <div
                         style={{
@@ -656,163 +737,25 @@ function Home() {
                   role="img"
                   aria-label={featureItems[activeFeature].mediaSlot.alt}
                   className="terrafed-media-placeholder"
-                  data-media-slot={featureItems[activeFeature].mediaSlot.filename}
+                  data-media-slot={
+                    featureItems[activeFeature].mediaSlot.filename
+                  }
                 >
                   <span className="terrafed-media-status">Planned</span>
                   <strong style={{ fontSize: "clamp(17px, 2vw, 23px)" }}>
                     {featureItems[activeFeature].num.slice(5)}
                   </strong>
-                  <span style={{ fontSize: 14, maxWidth: "42ch", lineHeight: 1.65 }}>
-                    Verified interface capture pending. No scientific output or sampling recommendations are simulated.
+                  <span
+                    style={{ fontSize: 14, maxWidth: "42ch", lineHeight: 1.65 }}
+                  >
+                    Verified interface capture pending. No scientific output or
+                    sampling recommendations are simulated.
                   </span>
                 </div>
               )}
-              <figcaption
-                aria-live="polite"
-                className="terrafed-map-description"
-                style={{
-                  background: "#F5F8F7",
-                  border: "1px solid #E1EBE8",
-                  borderRadius: 12,
-                  padding: "12px 16px",
-                  textAlign: "left",
-                }}
-              >
-                <strong style={{ color: "#0C2431" }}>What the visual shows: </strong>
-                {featureItems[activeFeature].imageCaption}
-                <div style={{ marginTop: 6 }}>
-                  {featureItems[activeFeature].mapDetails}
-                </div>
-                {featureItems[activeFeature].secondaryMediaSlot && (
-                  <div
-                    style={{
-                      marginTop: 12,
-                      padding: "10px 12px",
-                      border: "1px dashed #E1AA43",
-                      borderRadius: 10,
-                      background: "#FFF8EA",
-                    }}
-                  >
-                    <span className="terrafed-media-status">Planned</span>{" "}
-                    <strong style={{ color: "#0C2431" }}>Uncertainty map</strong>
-                    <span> — a verified uncertainty layer and readable legend are still needed.</span>
-                  </div>
-                )}
-              </figcaption>
             </figure>
           </div>
         </div>
-
-        {/* Three-step process */}
-        <div
-          style={{
-            width: "100%",
-            maxWidth: 1500,
-            paddingTop: "clamp(45px, 5vw, 65px)",
-            paddingBottom: "clamp(45px, 5vw, 65px)",
-            borderTop: "1px #E9E9E9 solid",
-            flexDirection: "column",
-            display: "flex",
-          }}
-        >
-          {/* Three-step process panel */}
-          <div
-            style={{
-              alignSelf: "stretch",
-              justifyContent: "center",
-              alignItems: "flex-start",
-              gap: 20,
-              display: "inline-flex",
-              flexWrap: "wrap",
-            }}
-          >
-            {[
-              {
-                num: "01",
-                title: "Start with shared model knowledge",
-                desc: "Generate a first estimate and show its uncertainty.",
-                status: "Prototype — uncertainty display",
-              },
-              {
-                num: "02",
-                title: "Adapt with local evidence",
-                desc: "Evaluate and improve the model using partner measurements.",
-                status: "Planned",
-              },
-              {
-                num: "03",
-                title: "Improve through smart sampling",
-                desc: "Identify the next observations that can most improve the local model, then repeat the cycle.",
-                status: "Planned",
-              },
-            ].map((item) => (
-              <div
-                key={item.num}
-                style={{
-                  flex: "1 1 0",
-                  minWidth: 240,
-                  paddingTop: 38,
-                  paddingBottom: 36,
-                  paddingRight: 30,
-                  borderTop: "1px #E9E9E9 solid",
-                  flexDirection: "column",
-                  gap: "clamp(20px, 3vw, 48px)",
-                  display: "inline-flex",
-                }}
-              >
-                <div
-                  style={{
-                    color: "#2F86B7",
-                    fontSize: "clamp(48px, 6vw, 92px)",
-                    fontWeight: "400",
-                    lineHeight: 1,
-                  }}
-                >
-                  {item.num}
-                </div>
-                <div
-                  style={{ flexDirection: "column", gap: 20, display: "flex" }}
-                >
-                  <div
-                    style={{
-                      color: "#0C2431",
-                      fontSize: 22,
-                      fontWeight: "400",
-                      lineHeight: "28px",
-                    }}
-                  >
-                    {item.title}
-                  </div>
-                  <div
-                    style={{
-                      color: "#6F6F6F",
-                      fontSize: 15,
-                      fontWeight: "400",
-                      lineHeight: "21px",
-                    }}
-                  >
-                    {item.desc}
-                  </div>
-                  <span
-                    style={{
-                      alignSelf: "flex-start",
-                      borderRadius: 999,
-                      padding: "5px 10px",
-                      color: "#65420E",
-                      background: "#FFF2D7",
-                      border: "1px solid #F3A73B",
-                      fontSize: 12,
-                      fontWeight: 700,
-                    }}
-                  >
-                    {item.status}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* Research evidence */}
         <section
           id="evidence"
@@ -820,7 +763,7 @@ function Home() {
           style={{
             width: "100%",
             maxWidth: 1500,
-            paddingTop: "clamp(60px, 6vw, 90px)",
+            paddingTop: SECTION_TOP_PADDING,
             paddingBottom: "clamp(60px, 6vw, 90px)",
             borderTop: "1px #E9E9E9 solid",
             display: "flex",
@@ -841,87 +784,154 @@ function Home() {
           >
             Evidence
           </div>
-          <h2
-            id="evidence-heading"
-            style={{
-              maxWidth: 860,
-              margin: 0,
-              color: "#0C2431",
-              fontSize: "clamp(36px, 5vw, 60px)",
-              fontWeight: 400,
-              lineHeight: 1.08,
-              textAlign: "left",
-            }}
-          >
-            Research-backed. Moving toward deployment.
-          </h2>
-          <p
-            style={{
-              maxWidth: 800,
-              margin: 0,
-              color: "#435B66",
-              fontSize: 16,
-              fontWeight: 400,
-              lineHeight: 1.65,
-              textAlign: "left",
-            }}
-          >
-            TerraFed builds on a research case spanning 50 farms in Brazil,
-            where locally adapted models were evaluated without treating
-            centralized data pooling as the only path. Initial Florida pilots
-            are now being prepared to refine the workflow with local soil
-            measurements, satellite inputs, and early-user feedback.
-          </p>
-          <a
-            href="https://doi.org/10.1016/j.jag.2025.105067"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              color: "#1B6284",
-              fontSize: 15,
-              fontWeight: 700,
-              textDecoration: "underline",
-              textUnderlineOffset: 4,
-            }}
-          >
-            Read the peer-reviewed research (DOI)
-            <span aria-hidden="true"> ↗</span>
-          </a>
-          <div
-            aria-label="TerraFed research and pilot milestones"
-            style={{
-              alignSelf: "stretch",
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 14,
-              marginTop: 16,
-            }}
-          >
-            {[
-              "Research tested across 50 farms in Brazil",
-              "Florida pilots in preparation",
-              "Supported by VentureWell",
-            ].map((proof) => (
-              <div
-                key={proof}
+          <div className="grid w-full grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.8fr)] lg:gap-12">
+            {/* Left: heading, paragraph, research link */}
+            <div
+              style={{
+                minWidth: 0,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                gap: 24,
+              }}
+            >
+              <h2
+                id="evidence-heading"
                 style={{
-                  flex: "1 1 220px",
-                  padding: "22px 24px",
-                  borderTop: "2px solid #13C65B",
-                  background: "#F5F8F7",
-                  color: "#243C32",
-                  fontSize: 15,
-                  fontWeight: 600,
-                  lineHeight: 1.5,
+                  maxWidth: 860,
+                  margin: 0,
+                  color: "#0C2431",
+                  fontSize: "clamp(36px, 5vw, 60px)",
+                  fontWeight: 400,
+                  lineHeight: 1.08,
                   textAlign: "left",
                 }}
               >
-                {proof}
-              </div>
-            ))}
+                Research-backed. Built for real-word application.
+              </h2>
+              <p
+                style={{
+                  maxWidth: 800,
+                  margin: 0,
+                  color: "#435B66",
+                  fontSize: 16,
+                  fontWeight: 400,
+                  lineHeight: 1.65,
+                  textAlign: "left",
+                }}
+              >
+                TerraFed builds on a scientific foundation supported by a
+                research case study spanning 50 farms in Brazil. The study
+                demonstrated the potential of locally adapted soil models while
+                exploring approaches that reduce the need to centralize
+                sensitive observations.
+                <br />
+                These findings provide a foundation for TerraFed's development
+                as a practical platform that combines Earth observation, local
+                soil measurements, and adaptive modeling to deliver more
+                relevant, uncertainty-aware soil intelligence.
+              </p>
+              <motion.a
+                href="https://doi.org/10.1016/j.jag.2025.105067"
+                target="_blank"
+                rel="noopener noreferrer"
+                initial="rest"
+                animate="rest"
+                whileHover="hover"
+                whileFocus="hover"
+                variants={{
+                  rest: { color: "#008CD8" },
+                  hover: { color: "#00B029" },
+                }}
+                transition={{
+                  duration: 0.35,
+                  ease: "easeInOut",
+                }}
+                style={{
+                  position: "relative",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  alignSelf: "flex-start",
+                  gap: 6,
+                  width: "fit-content",
+                  fontSize: 15,
+                  fontWeight: 700,
+                  textDecoration: "none",
+                  paddingBottom: 5,
+                }}
+              >
+                Read the peer-reviewed research (DOI)
+                <span aria-hidden="true">↗</span>
+                <motion.span
+                  aria-hidden="true"
+                  variants={{
+                    rest: {
+                      scaleX: 0,
+                      backgroundColor: "#008CD8",
+                    },
+                    hover: {
+                      scaleX: 1,
+                      backgroundColor: "#00B029",
+                    },
+                  }}
+                  transition={{
+                    duration: 0.35,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    left: 0,
+                    width: "100%",
+                    height: 1.5,
+                    transformOrigin: "left center",
+                    pointerEvents: "none",
+                  }}
+                />
+              </motion.a>
+            </div>
+            {/* Right: three stacked highlights */}
+            <div
+              aria-label="TerraFed research and pilot milestones"
+              style={{
+                display: "flex",
+                marginTop: 20,
+                flexDirection: "column",
+                gap: 60,
+                width: "100%",
+                minWidth: 0,
+              }}
+            >
+              {[
+                "Research tested across 50 farms in Brazil",
+                "Florida pilots in preparation",
+                "Supported by VentureWell",
+              ].map((proof) => (
+                <div
+                  key={proof}
+                  style={{
+                    width: "100%",
+                    padding: "22px 26px",
+                    background: "#FFFFFF",
+                    border: "1px solid #E3ECE8",
+                    borderLeft: "3px solid #13C65B",
+                    borderRadius: 12,
+                    boxShadow: "0 4px 18px rgba(12, 36, 49, 0.5)",
+                    color: "#0C2431",
+                    fontSize: 14,
+                    fontWeight: 600,
+                    lineHeight: 1.55,
+                    letterSpacing: "-0.01em",
+                    textAlign: "left",
+                    transition: "box-shadow 0.25s ease, transform 0.25s ease",
+                  }}
+                >
+                  {proof}
+                </div>
+              ))}
+            </div>
           </div>
         </section>
-
         {/* Organizational partners */}
         <section
           id="partners"
@@ -929,7 +939,7 @@ function Home() {
           style={{
             width: "100%",
             maxWidth: 1500,
-            paddingTop: "clamp(60px, 6vw, 90px)",
+            paddingTop: SECTION_TOP_PADDING,
             paddingBottom: "clamp(65px, 6vw, 95px)",
             borderTop: "1px #E9E9E9 solid",
             display: "flex",
@@ -975,11 +985,11 @@ function Home() {
               textAlign: "left",
             }}
           >
-            TerraFed is designed to serve as a shared soil-intelligence
-            backbone or a partner-specific integration. Agricultural
-            organizations can bring locally relevant soil intelligence into
-            their existing workflows, with farmers benefiting through the
-            services those organizations already provide.
+            TerraFed is designed to serve as a shared soil-intelligence backbone
+            or a partner-specific integration. Agricultural organizations can
+            bring locally relevant soil intelligence into their existing
+            workflows, with farmers benefiting through the services those
+            organizations already provide.
           </p>
           <div
             style={{
@@ -1057,7 +1067,6 @@ function Home() {
             ))}
           </div>
         </section>
-
         {/* Contact / CTA */}
         <div
           id="contact"
@@ -1066,7 +1075,7 @@ function Home() {
             maxWidth: 1500,
             paddingLeft: "clamp(16px, 10vw, 190px)",
             paddingRight: "clamp(16px, 10vw, 190px)",
-            paddingTop: "clamp(50px, 6vw, 80px)",
+            paddingTop: SECTION_TOP_PADDING,
             paddingBottom: "clamp(60px, 7vw, 95px)",
             borderTop: "0.50px #E9E9E9 solid",
             flexDirection: "column",
@@ -1086,7 +1095,7 @@ function Home() {
               textAlign: "center",
             }}
           >
-            Build the next TerraFed pilot with us.
+            Be part of what's next for soil intelligence.
           </h2>
           <p
             style={{
@@ -1132,113 +1141,14 @@ function Home() {
                 cursor: "pointer",
               }}
             >
-              Discuss a Pilot
+              Join the Waitlist
               <MdNorthEast aria-hidden="true" size={16} />
             </button>
-            <button
-              type="button"
-              onClick={() => {
-                const reduceMotion = window.matchMedia(
-                  "(prefers-reduced-motion: reduce)",
-                ).matches;
-                document.getElementById("features")?.scrollIntoView({
-                  behavior: reduceMotion ? "instant" : "smooth",
-                  block: "start",
-                });
-              }}
-              style={{
-                flex: "1 1 200px",
-                maxWidth: 280,
-                padding: "15px 22px",
-                background: "white",
-                border: "2px solid #2F86B7",
-                borderRadius: 1000,
-                justifyContent: "center",
-                alignItems: "center",
-                display: "inline-flex",
-                color: "#0C2431",
-                fontSize: 14,
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
-              Explore the Workflow
-            </button>
           </div>
         </div>
       </div>
-
-      {/* Footer */}
-      <div
-        style={{
-          width: "100%",
-          maxWidth: 1500,
-          paddingTop: 40,
-          paddingBottom: 20,
-          borderTop: "1px #E9E9E9 solid",
-          justifyContent: "space-between",
-          alignItems: "center",
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 12,
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 27 }}>
-          {[
-            {
-              label: "Product",
-              action: () =>
-                document
-                  .getElementById("product")
-                  ?.scrollIntoView({ behavior: "smooth" }),
-            },
-            {
-              label: "Workflow",
-              action: () =>
-                document
-                  .getElementById("features")
-                  ?.scrollIntoView({ behavior: "smooth" }),
-            },
-            { label: "Contact", action: () => navigate("/contact") },
-          ].map(({ label, action }) => (
-            <div
-              key={label}
-              onClick={action}
-              style={{
-                color: "black",
-                fontSize: 14,
-                fontWeight: "700",
-                lineHeight: "19.6px",
-                cursor: "pointer",
-              }}
-            >
-              {label}
-            </div>
-          ))}
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ color: "#0FD12F", fontSize: 12, fontWeight: "400" }}>
-            TerraFed 2026
-          </div>
-          <div style={{ color: "#6F6F6F", fontSize: 12 }}>|</div>
-          <div style={{ color: "#0FD12F", fontSize: 12, fontWeight: "400" }}>
-            <a
-              href="https://innovate.research.ufl.edu/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              UF Innovate
-            </a>
-          </div>
-          <div style={{ color: "#6F6F6F", fontSize: 12 }}>|</div>
-          <div style={{ color: "#111111", fontSize: 12, fontWeight: "400" }}>
-            All Rights Reserved
-          </div>
-        </div>
-      </div>
-
+      <Footer />
     </div>
   );
 }
-
 export default Home;
