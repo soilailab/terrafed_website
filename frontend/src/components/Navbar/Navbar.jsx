@@ -9,14 +9,14 @@ const navLinks = [
   { label: "Workflow", path: "/#features", sectionId: "features" },
   { label: "Evidence", path: "/#evidence", sectionId: "evidence" },
   { label: "Partners", path: "/#partners", sectionId: "partners" },
-  { label: "Contact", path: "/contact", sectionId: "contact" },
+  { label: "Contact", path: "/#contact", sectionId: "contact" },
 ];
 
 function Navbar({
   onHeightChange,
   activeSection,
-  ctaLabel = "Pilot Program",
-  ctaPath = "/contact",
+  ctaLabel = "Join the Waitlist",
+  ctaPath = "/#contact",
 }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -49,32 +49,20 @@ function Navbar({
   }
 
   function handlePathClick(path) {
-    if (path === "/contact") {
-      if (location.pathname === "/contact") {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      } else {
-        navigate("/contact");
-        setTimeout(() => {
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        }, 100);
-      }
-      return;
-    }
-
     if (path.startsWith("/#")) {
       const id = path.slice(2);
 
       if (location.pathname === "/") {
+        const reduceMotion = window.matchMedia(
+          "(prefers-reduced-motion: reduce)",
+        ).matches;
         document.getElementById(id)?.scrollIntoView({
-          behavior: "smooth",
+          behavior: reduceMotion ? "instant" : "smooth",
+          block: "start",
         });
       } else {
-        navigate("/");
-        setTimeout(() => {
-          document.getElementById(id)?.scrollIntoView({
-            behavior: "smooth",
-          });
-        }, 100);
+        // Home handles the hash after navigation, so no timing-based timeout is needed.
+        navigate(path);
       }
       return;
     }
@@ -86,10 +74,7 @@ function Navbar({
     handlePathClick(ctaPath);
   }
 
-  const currentSection =
-    location.pathname === "/contact" ? "contact" : activeSection;
-
-  const hideCta = location.pathname === "/contact";
+  const currentSection = activeSection;
 
   return (
     <div
@@ -224,9 +209,7 @@ function Navbar({
       {/* CTA Button */}
       <button
         type="button"
-        onClick={hideCta ? undefined : handleCtaClick}
-        disabled={hideCta}
-        aria-hidden={hideCta}
+        onClick={handleCtaClick}
         style={{
           paddingLeft: 22,
           paddingRight: 22,
@@ -240,9 +223,7 @@ function Navbar({
           alignItems: "center",
           gap: 4,
           display: "flex",
-          cursor: hideCta ? "default" : "pointer",
-          visibility: hideCta ? "hidden" : "visible",
-          pointerEvents: hideCta ? "none" : "auto",
+          cursor: "pointer",
         }}
       >
         <div

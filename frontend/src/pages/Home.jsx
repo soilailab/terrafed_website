@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   MdMap,
@@ -8,11 +8,11 @@ import {
   MdMyLocation,
   MdCheck,
   MdClose,
-  MdNorthEast,
 } from "react-icons/md";
 import SoilHero from "../components/SoilHero";
 import Navbar from "../components/Navbar/Navbar";
 import Footer from "../components/Footer/Footer";
+import WaitlistForm from "../components/WaitlistForm";
 import { mediaAssets } from "../data/mediaAssets";
 const screenModules = import.meta.glob("../assets/examplescreens/screen*.png", {
   eager: true,
@@ -26,7 +26,7 @@ const SECTION_TOP_PADDING = "clamp(45px, 5vw, 65px)";
 const SECTION_GAP = "clamp(40px, 5vw, 72px)";
 
 function Home() {
-  const navigate = useNavigate();
+  const { hash } = useLocation();
   const [navHeight, setNavHeight] = useState(0);
   const [activeFeature, setActiveFeature] = useState(0);
   const [activeSection, setActiveSection] = useState(null);
@@ -89,6 +89,29 @@ function Home() {
       status: "Planned",
     },
   ];
+  // Support deep links (including the legacy /contact redirect) to in-page sections.
+  useEffect(() => {
+    if (!hash) return;
+    const targetId = decodeURIComponent(hash.slice(1));
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById(targetId)?.scrollIntoView({
+        behavior: "instant",
+        block: "start",
+      });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [hash]);
+
+  function scrollToSection(id) {
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    document.getElementById(id)?.scrollIntoView({
+      behavior: reduceMotion ? "instant" : "smooth",
+      block: "start",
+    });
+  }
+
   useEffect(() => {
     const sectionIds = [
       "product",
@@ -143,22 +166,67 @@ function Home() {
       if (animationFrame !== null) window.cancelAnimationFrame(animationFrame);
     };
   }, [navHeight]);
+  // Submit waitlist interest to the Flask contact endpoint. An unset base URL
+  // uses the same-origin /api route (appropriate behind a production proxy).
+
+async function submitWaitlist(formData) {
+  const endpoint =
+    import.meta.env.VITE_WAITLIST_API_URL ||
+    "https://geoserver-portal.soilslab.ai/fedfarms-accounts-api/api/access-requests";
+
+  const reason = [
+    formData.message?.trim() ||
+      "I would like to join the TerraFed waitlist.",
+    formData.role ? `Role: ${formData.role}` : null,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+
+  const payload = {
+    full_name: formData.name.trim(),
+    email: formData.email.trim(),
+    organization: formData.organization.trim(),
+    reason,
+  };
+
+  let response;
+
+  try {
+    response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+  } catch {
+    throw new Error(
+      "Unable to connect to the waitlist service. Please try again later."
+    );
+  }
+
+  const result = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(
+      result?.message ||
+      result?.detail ||
+      "Unable to join the waitlist. Please try again."
+    );
+  }
+
+  return result;
+}
+
+
   return (
     <div className="relative flex flex-col items-center bg-white px-4 pb-5 md:px-10">
       <Navbar onHeightChange={setNavHeight} activeSection={activeSection} />
       {/* Hero Header */}
       <div style={{ width: "100%", maxWidth: 1500 }}>
         <SoilHero
-          onExploreWorkflow={() => {
-            const reduceMotion = window.matchMedia(
-              "(prefers-reduced-motion: reduce)",
-            ).matches;
-            document.getElementById("features")?.scrollIntoView({
-              behavior: reduceMotion ? "instant" : "smooth",
-              block: "start",
-            });
-          }}
-          onDiscussPilot={() => navigate("/contact")}
+          onExploreWorkflow={() => scrollToSection("features")}
+          onJoinWaitlist={() => scrollToSection("contact")}
         />
       </div>
       <div style={{ paddingBottom: 24 }} />
@@ -1067,9 +1135,10 @@ function Home() {
             ))}
           </div>
         </section>
-        {/* Contact / CTA */}
-        <div
+        {/* Waitlist section: the former contact form now lives on the homepage. */}
+        <section
           id="contact"
+          aria-labelledby="waitlist-heading"
           style={{
             width: "100%",
             maxWidth: 1500,
@@ -1086,6 +1155,7 @@ function Home() {
           }}
         >
           <h2
+            id="waitlist-heading"
             style={{
               margin: 0,
               color: "black",
@@ -1105,47 +1175,17 @@ function Home() {
               fontWeight: "400",
               lineHeight: "21px",
               textAlign: "center",
+              maxWidth: 760,
             }}
           >
             We are preparing partner-led pilots that connect local soil
             measurements, Earth observation, uncertainty, and model improvement
             in one repeatable workflow.
           </p>
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: 14,
-            }}
-          >
-            <button
-              type="button"
-              onClick={() => navigate("/contact")}
-              style={{
-                flex: "1 1 200px",
-                maxWidth: 280,
-                padding: "15px 22px",
-                background: "#13C65B",
-                border: "2px solid #13C65B",
-                borderRadius: 1000,
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 8,
-                display: "inline-flex",
-                color: "#0C2431",
-                fontSize: 14,
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-            >
-              Join the Waitlist
-              <MdNorthEast aria-hidden="true" size={16} />
-            </button>
+          <div style={{ width: "100%", maxWidth: 760 }}>
+            <WaitlistForm onSubmit={submitWaitlist} />
           </div>
-        </div>
+        </section>
       </div>
       <Footer />
     </div>

@@ -1,7 +1,7 @@
 import { MdArrowForward, MdOutlineArrowOutward } from "react-icons/md";
 import SoilHeroCarousel from "./SoilHeroCarousel/SoilHeroCarousel";
 
-export default function SoilHero({ onExploreWorkflow, onDiscussPilot }) {
+export default function SoilHero({ onExploreWorkflow, onJoinWaitlist }) {
   return (
     <section
       aria-labelledby="terrafed-hero-title"
@@ -44,10 +44,10 @@ export default function SoilHero({ onExploreWorkflow, onDiscussPilot }) {
             </button>
             <button
               type="button"
-              onClick={onDiscussPilot}
+              onClick={onJoinWaitlist}
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full drop-shadow-xl border border-[#91B7C0] bg-white/90 px-6 py-3 text-sm font-bold text-[#0C2431] motion-safe:transition-colors motion-safe:duration-200 hover:border-[#008CD8] hover:bg-[#E9F5F8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#008CD8]"
             >
-              Join the Pilot Program
+              Join the Waitlist
               <MdOutlineArrowOutward aria-hidden="true" size={17} />
             </button>
           </div>
