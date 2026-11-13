@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import "./ApplicationWalkthrough.css";
 import mapping1 from "../assets/pilot/walkthrough/mapping-1.png";
 import mapping2 from "../assets/pilot/walkthrough/mapping-2.png";
 import mapping3 from "../assets/pilot/walkthrough/mapping-3.png";
@@ -58,9 +59,16 @@ function wrap(index, count) {
 }
 
 function StepImage({ step }) {
-  return step.image
-    ? <img src={step.image} alt={step.alt} loading="lazy" decoding="async" />
-    : <span className="planned-preview">Planned workflow</span>;
+  if (step.image) {
+    return <img src={step.image} alt={step.alt} loading="lazy" decoding="async" />;
+  }
+
+  return (
+    <div className="planned-preview" aria-label="Planned workflow; screenshots pending">
+      <span className="planned-crosshair" aria-hidden="true">⌖</span>
+      <small>PLANNED WORKFLOW<br />SCREENSHOTS PENDING</small>
+    </div>
+  );
 }
 
 export default function ApplicationWalkthrough() {
@@ -131,7 +139,10 @@ export default function ApplicationWalkthrough() {
             </button>
           ))}
         </div>
-
+        <div className="walkthrough-heading">
+          <p className="kicker">Interface walkthroughs</p>
+          <h3>See TerraFed in action.</h3>
+        </div>
         {applications.map(({ id }, index) => (
           <div
             key={id}
@@ -147,7 +158,7 @@ export default function ApplicationWalkthrough() {
                   <p>{application.description}</p>
                 </div>
                 <div
-                  className="walkthrough-deck"
+                  className={`walkthrough-deck${application.id === "sampling" ? " sampling-deck" : ""}`}
                   onTouchStart={(event) => {
                     const { clientX, clientY } = event.touches[0];
                     touchStart.current = { x: clientX, y: clientY };
@@ -156,7 +167,8 @@ export default function ApplicationWalkthrough() {
                   onTouchCancel={() => { touchStart.current = null; }}
                 >
                   {[-1, 1].map((direction) => {
-                    const neighbor = steps[wrap(stepIndex + direction, steps.length)];
+                    const neighborIndex = wrap(stepIndex + direction, steps.length);
+                    const neighbor = steps[neighborIndex];
                     return (
                       <button
                         key={direction}
@@ -168,14 +180,28 @@ export default function ApplicationWalkthrough() {
                         <span className="walkthrough-image" aria-hidden="true">
                           <StepImage step={neighbor} />
                         </span>
-                        <span>{neighbor.title}</span>
+                        {application.id === "sampling" ? (
+                          <span className="sampling-card-copy">
+                            <span className="sampling-chip">PLANNED</span>
+                            <span className="sampling-step">STEP {String(neighborIndex + 1).padStart(2, "0")}</span>
+                            <strong>{neighbor.title}</strong>
+                            <span className="sampling-detail">{neighbor.detail}</span>
+                          </span>
+                        ) : (
+                          <span>{neighbor.title}</span>
+                        )}
                       </button>
                     );
                   })}
                   <article className="walkthrough-card current-card" aria-live="polite" aria-atomic="true">
                     <div className="walkthrough-image"><StepImage step={step} /></div>
                     <div className="step-copy">
-                      <p className="kicker">Step {stepIndex + 1} of {steps.length}</p>
+                      {application.id === "sampling" && <span className="sampling-chip">PLANNED</span>}
+                      <p className="kicker">
+                        {application.id === "sampling"
+                          ? `STEP ${String(stepIndex + 1).padStart(2, "0")}`
+                          : `Step ${stepIndex + 1} of ${steps.length}`}
+                      </p>
                       <h5>{step.title}</h5>
                       <p>{step.detail}</p>
                     </div>
