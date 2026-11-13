@@ -31,7 +31,7 @@ export default function Home() {
         <div className="wrap hero-grid">
           <div className="hero-copy">
             <p className="kicker">The future of collaborative agriculture</p>
-            <h1 id="hero-title">Your data stays yours.<br /><em>AI works for you.</em></h1>
+            <h1 id="hero-title">AI farm models with a click,<br /><em>your data stays yours.</em></h1>
             <p>TerraFed helps farmers and agricultural organizations benefit from AI that learns collaboratively <strong>while they retain control over sensitive local data.</strong></p>
             <div className="hero-actions">
               <Link className="button button-outline" to="/#how">See how it works <span aria-hidden="true">↗</span></Link>

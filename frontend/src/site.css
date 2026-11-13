@@ -48,6 +48,13 @@
   font-size: clamp(3rem, 5.75vw, 5.5rem);
 }
 
+/* Hero title typography only */
+.terrafed-site .hero #hero-title {
+  font-size: clamp(3rem, 5vw, 5rem);
+  line-height: 1.05;
+  letter-spacing: -0.055em;
+}
+
 .terrafed-site h2 {
   font-size: clamp(2.55rem, 5vw, 4.85rem);
 }
