@@ -1,0 +1,1032 @@
+/* TerraFed website styles. Global font loading and resets live in index.css. */
+
+/* ==================== SITE THEME & TYPOGRAPHY ==================== */
+
+.terrafed-site {
+  --site-header-height: 76px;
+  --cream: #f7f3e8;
+  --paper: #fffdf8;
+  --forest: #202822;
+  --green: #4f9159;
+  --coral: #fa865d;
+  --muted: #59645c;
+  --line: #d9dfd2;
+  --display: var(--heading, Georgia, "Times New Roman", serif);
+  --body-font: var(--sans, "Inter", Arial, sans-serif);
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: var(--cream);
+  color: var(--forest);
+  font: 16px/1.6 var(--body-font);
+  letter-spacing: normal;
+}
+
+.terrafed-site main {
+  flex: 1;
+}
+
+.terrafed-site :is(button, input, select, textarea) {
+  font-family: var(--body-font);
+}
+
+.terrafed-site .wrap {
+  width: min(1260px, calc(100% - 80px));
+  margin-inline: auto;
+}
+
+.terrafed-site :is(h1, h2, h3, h4, h5) {
+  margin: 0;
+  color: inherit;
+  font-family: var(--display);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -.045em;
+}
+
+.terrafed-site h1 {
+  font-size: clamp(3rem, 5.75vw, 5.5rem);
+}
+
+.terrafed-site h2 {
+  font-size: clamp(2.55rem, 5vw, 4.85rem);
+}
+
+.terrafed-site h3 {
+  font-size: clamp(1.9rem, 3vw, 3.35rem);
+}
+
+.terrafed-site h4 {
+  font-size: clamp(1.65rem, 2.4vw, 2.2rem);
+}
+
+.terrafed-site h5 {
+  font-size: clamp(1.4rem, 2vw, 1.8rem);
+}
+
+.terrafed-site em {
+  color: var(--green);
+}
+
+.terrafed-site :focus-visible {
+  outline: 3px solid #007b9a;
+  outline-offset: 4px;
+}
+
+.terrafed-site [tabindex="-1"]:focus {
+  outline: 0;
+}
+
+.terrafed-site [id][tabindex="-1"] {
+  scroll-margin-top: calc(var(--site-header-height) + 1px);
+}
+
+/* ==================== ACCESSIBILITY & NAVIGATION ==================== */
+
+.terrafed-site .skip-link {
+  position: fixed;
+  z-index: 30;
+  inset: 10px auto auto 10px;
+  transform: translateY(-150%);
+  padding: 10px 14px;
+  background: var(--paper);
+}
+
+.terrafed-site .skip-link:focus {
+  transform: none;
+}
+
+.terrafed-site .nav-links a:not(.button),
+.terrafed-site .mobile-toggle {
+  color: #fff;
+}
+
+.terrafed-site .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #53945b;
+  border-bottom: 1px solid rgba(255,255,255,.15);
+}
+
+.terrafed-site .site-nav,
+.terrafed-site .nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.terrafed-site .site-nav {
+  min-height: var(--site-header-height);
+}
+
+.terrafed-site .nav-links {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Animated navbar underline */
+.terrafed-site .nav-links a:not(.button) {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding-bottom: 6px;
+  text-decoration: none;
+}
+
+.terrafed-site .nav-links a:not(.button)::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background: #ffffff;
+  border-radius: 2px;
+
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Hover, keyboard focus, or active section */
+.terrafed-site .nav-links a:not(.button):is(
+  :hover,
+  :focus-visible,
+  .active-section
+)::after {
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .terrafed-site .nav-links a:not(.button)::after {
+    transition: none;
+  }
+}
+
+.terrafed-site .site-brand img {
+  width: 156px;
+  height: auto;
+}
+
+.terrafed-site .mobile-toggle {
+  display: none;
+}
+
+.terrafed-site .site-footer {
+  background: #e7e9dd;
+}
+
+.terrafed-site .footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px;
+  padding-block: 24px;
+  color: #8a9d9d;
+  font-size: 12px;
+}
+
+.terrafed-site .footer-credit {
+  display: grid;
+  gap: 5px;
+}
+
+.terrafed-site .footer-credit img {
+  width: 108px;
+  height: auto;
+}
+
+
+.terrafed-site .footer-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  margin-left: auto;
+  text-align: right;
+}
+
+.terrafed-site .footer-links a {
+  color: #637262;
+  text-decoration: underline;
+}
+
+/* ==================== BUTTONS ==================== */
+
+.terrafed-site .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  border: 1px solid transparent;
+  border-radius: 100px;
+  min-height: 46px;
+  padding: 10px 22px;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.3;
+  text-align: center;
+  transition: background-color .2s, border-color .2s;
+}
+
+.terrafed-site .button-coral {
+  background: #fa865d;
+  color: #1d2a24;
+}
+
+.terrafed-site .button-coral:hover {
+  background: #ff9d73;
+}
+
+.terrafed-site .button-coral[aria-current="page"] {
+  border-color: #623622;
+}
+
+.terrafed-site .button-outline {
+  color: inherit;
+  border-color: #f7f3e8a0;
+}
+
+.terrafed-site .button-outline:hover {
+  background: #ffffff18;
+}
+
+.terrafed-site .button-light {
+  background: var(--paper);
+  color: var(--forest);
+}
+
+.terrafed-site .button-light:hover {
+  background: #dcebd8;
+}
+
+.terrafed-site .button:disabled {
+  cursor: wait;
+  opacity: .65;
+}
+
+/* ==================== HERO ==================== */
+
+.terrafed-site .hero {
+  background: #53945b;
+  color: #fffefa;
+}
+
+.terrafed-site .hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 66px);
+  padding-top: clamp(56px, 6vw, 84px);
+  padding-bottom: clamp(64px, 8vw, 112px);
+}
+
+.terrafed-site .hero :is(em, .kicker) {
+  color: #e7f4d8;
+}
+
+.terrafed-site .hero h1 em {
+  color: #f8e9d6;
+}
+
+.terrafed-site .hero .kicker {
+  color: #e9f4d8;
+  font-weight: 900;
+}
+
+.terrafed-site .hero h1 {
+  margin-block: 17px 24px;
+}
+
+.terrafed-site .hero-copy > p:not(.kicker) {
+  max-width: 515px;
+  color: #f5f5e9;
+  line-height: 1.75;
+  font-weight: 500;
+}
+
+.terrafed-site .hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.terrafed-site .hero .button-outline {
+  color: #fff;
+  border-color: #fff;
+}
+
+.terrafed-site .hero .tf-hero-carousel {
+  --tf-blue: #ffa884;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  color: var(--paper);
+}
+
+.terrafed-site .hero .tf-carousel-copy {
+  padding: 4px 12px 0;
+}
+
+.terrafed-site .hero .tf-carousel-category {
+  color: #e7f4d8;
+}
+
+.terrafed-site .hero .tf-carousel-copy h2 {
+  margin: 0 0 8px;
+  color: var(--paper);
+  font-size: clamp(1.45rem, 2.3vw, 2rem);
+  letter-spacing: -.035em;
+}
+
+.terrafed-site .hero :is(.tf-carousel-description, .tf-art-key, .tf-carousel-pause) {
+  color: #f1f7e9;
+}
+
+.terrafed-site .hero .tf-carousel-pause:hover {
+  background: #ffffff18;
+}
+
+.terrafed-site .hero .tf-carousel-dots button span {
+  background: #e9f4e598;
+}
+
+.terrafed-site .hero .tf-carousel-dots button[aria-current="true"] span {
+  background: var(--tf-blue);
+}
+
+/* ==================== SHARED SECTIONS ==================== */
+
+.terrafed-site .section {
+  padding-block: clamp(56px, 8vw, 108px);
+  padding-top: clamp(56px, 6vw, 50px);
+  padding-bottom: clamp(64px, 8vw, 112px);
+}
+
+.terrafed-site .section-heading {
+  text-align: center;
+}
+
+.terrafed-site .section-heading h2 {
+  max-width: 880px;
+  margin-inline: auto;
+}
+
+.terrafed-site .kicker {
+  display: block;
+  color: #387a45;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.terrafed-site :is(.section, .pilot-intro) h2,
+.terrafed-site .pilot-intro h1 {
+  margin-top: 16px;
+}
+
+.terrafed-site .section-copy {
+  max-width: 680px;
+  margin-top: 20px;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+/* ==================== HOW IT WORKS & PARTICIPANTS ==================== */
+
+.terrafed-site .how-section {
+  background: #f7f3e8;
+}
+
+.terrafed-site .how-section h2,
+.terrafed-site .applications-section .section-heading h2,
+.terrafed-site .partners-section h2 {
+  color: #21392a;
+}
+
+.terrafed-site .how-section h2 {
+  max-width: 820px;
+}
+
+.terrafed-site .how-grid,
+.terrafed-site .participant-grid {
+  display: grid;
+  gap: 18px;
+  margin-top: 36px;
+}
+
+.terrafed-site .how-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.terrafed-site .how-grid img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.terrafed-site .participant-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.terrafed-site .participant-grid img {
+  width: 100%;
+}
+
+.terrafed-site .partners-section {
+  background: #f7f3e8;
+}
+
+/* ==================== OUR STORY ==================== */
+
+.terrafed-site .story-section {
+  background: #fffdf8;
+}
+
+.terrafed-site .story-section h2 {
+  color: #182c29;
+}
+
+.terrafed-site .story-section h2 em {
+  color: #548e60;
+}
+
+.terrafed-site .story-copy {
+  max-width: 940px;
+  margin-top: 24px;
+}
+
+.terrafed-site .story-copy p {
+  margin-bottom: 14px;
+  color: #4e605a;
+}
+
+.terrafed-site .story-link {
+  color: #4f925f;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  font-weight: 800;
+}
+
+.terrafed-site .story-support {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px 38px;
+  border-top: 1px solid var(--line);
+  padding-top: 22px;
+  margin-top: 54px;
+}
+
+.terrafed-site .support-wordmark {
+  color: #164469;
+  font: 700 25px/1.2 var(--display);
+}
+
+.terrafed-site .support-wordmark.venturewell {
+  color: #34674c;
+}
+
+.terrafed-site .support-wordmark:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* ==================== RESEARCH & CONTACT ==================== */
+
+.terrafed-site .evidence-section {
+  background: #478752;
+  color: #fffefa;
+}
+
+.terrafed-site .evidence-section .kicker {
+  color: #e9f4db;
+  font-weight: 900;
+}
+
+.terrafed-site .evidence-section .section-copy {
+  color: #f2f2e6;
+}
+
+.terrafed-site .contact-section {
+  background: #f2eddf;
+  color: #202822;
+}
+
+.terrafed-site .contact-section .kicker {
+  color: #387a45;
+  font-weight: 900;
+}
+
+.terrafed-site .contact-section .section-copy {
+  color: #637262;
+}
+
+.terrafed-site :is(.evidence-grid, .contact-grid) {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(28px, 6vw, 82px);
+}
+
+.terrafed-site .contact-grid {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.terrafed-site .evidence-grid .button {
+  margin-top: 24px;
+}
+
+.terrafed-site .evidence-section .button-light {
+  background: #fa865d;
+  color: #203124;
+}
+
+.terrafed-site .proof-panel {
+  padding: 22px;
+  border: 0;
+  border-radius: 16px;
+  background: transparent;
+  box-shadow: none;
+}
+
+.terrafed-site .region-entry {
+  display: grid;
+  grid-template-columns: minmax(50px, 82px) 1fr;
+  align-items: center;
+  gap: 16px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #c9e1cc40;
+}
+
+.terrafed-site .region-entry img {
+  width: 100%;
+  height: auto;
+}
+
+.terrafed-site .region-entry h3 {
+  font-size: 24px;
+  margin-bottom: 6px;
+  color: #f7f5ea;
+}
+
+.terrafed-site .region-entry p {
+  color: #d8e4d6;
+  font-size: 13px;
+}
+
+/* ==================== APPLICATIONS & WALKTHROUGH ==================== */
+
+.terrafed-site .applications-section {
+  background: #e6ebdf;
+}
+
+.terrafed-site .applications-section .section-heading h2 em {
+  color: #687b64;
+}
+
+.terrafed-site .application-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-block: 40px 34px;
+}
+
+.terrafed-site .application-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  text-align: left;
+  background: #f8faf3;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px;
+  border-color: #ccdac9;
+}
+
+.terrafed-site .application-tab strong {
+  font: 600 25px/1.15 var(--display);
+  letter-spacing: -.025em;
+}
+
+.terrafed-site .application-tab small {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.terrafed-site .application-tab[aria-selected="true"] {
+  background: #4f9159;
+  color: #fff;
+  border-color: #4f9159;
+}
+
+.terrafed-site .application-tab[aria-selected="true"] :is(small, .kicker) {
+  color: #f1f8ec;
+}
+
+.terrafed-site .walkthrough-heading {
+  border-top: 1px solid #afc3ad;
+  padding-top: 26px;
+}
+
+.terrafed-site .walkthrough-heading h3 {
+  margin-top: 8px;
+}
+
+.terrafed-site .walkthrough-intro {
+  margin-block: 15px 20px;
+  text-align: center;
+}
+
+.terrafed-site .walkthrough-intro p {
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.terrafed-site .walkthrough-deck {
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+  padding-block: 15px;
+  touch-action: pan-y;
+}
+
+.terrafed-site .walkthrough-card {
+  grid-area: 1 / 1;
+  width: min(100%, 525px);
+  overflow: hidden;
+  padding: 14px;
+  border-radius: 20px;
+  color: var(--paper);
+  background: var(--green);
+  box-shadow: 0 16px 32px #17332230;
+}
+
+.terrafed-site .preview-card {
+  width: min(36%, 425px);
+  padding-bottom: 22px;
+  text-align: left;
+}
+
+.terrafed-site .preview-card > span {
+  display: block;
+  margin-top: 12px;
+  font-weight: 700;
+}
+
+.terrafed-site .previous-card {
+  transform: translateX(-65%) rotate(-5deg);
+  background: #e98553;
+}
+
+.terrafed-site .next-card {
+  transform: translateX(65%) rotate(5deg);
+  background: #214e38;
+}
+
+.terrafed-site .next-card > span {
+  text-align: right;
+}
+
+.terrafed-site .current-card {
+  z-index: 1;
+  background: #4f9159;
+}
+
+.terrafed-site .walkthrough-image {
+  aspect-ratio: 16 / 10;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 11px;
+  background: #d7e2d2;
+}
+
+.terrafed-site .walkthrough-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.terrafed-site .planned-preview {
+  color: #325842;
+  font-weight: 700;
+}
+
+.terrafed-site .step-copy {
+  padding: 15px 6px 6px;
+}
+
+.terrafed-site .step-copy .kicker {
+  color: #e7f4d8;
+  font-weight: 900;
+}
+
+.terrafed-site .step-copy h5 {
+  margin-block: 4px 6px;
+}
+
+.terrafed-site .walkthrough-controls,
+.terrafed-site .walkthrough-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.terrafed-site .walkthrough-controls > button {
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 25px;
+}
+
+.terrafed-site .walkthrough-dots button {
+  display: grid;
+  place-items: center;
+  min-width: 32px;
+  height: 44px;
+  padding-inline: 4px;
+}
+
+.terrafed-site .walkthrough-dots span {
+  width: 9px;
+  height: 9px;
+  background: #567a5c;
+  border-radius: 8px;
+}
+
+.terrafed-site .walkthrough-dots [aria-current] span {
+  width: 23px;
+  background: #e98553;
+}
+
+/* ==================== PILOT PAGE & FORM ==================== */
+
+.terrafed-site .pilot-intro {
+  padding-block: clamp(54px, 8vw, 90px) 36px;
+}
+
+.terrafed-site .pilot-intro .button {
+  margin-block: 24px;
+}
+
+.terrafed-site .pilot-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(245px, 310px);
+  align-items: start;
+  gap: clamp(24px, 5vw, 58px);
+  padding-bottom: 90px;
+}
+
+.terrafed-site .form-panel {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: clamp(20px, 4vw, 44px);
+  box-shadow: 0 18px 45px #1e4b310e;
+}
+
+.terrafed-site .form-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-bottom: 18px;
+  margin-bottom: 23px;
+  border-bottom: 1px solid var(--line);
+}
+
+.terrafed-site .form-header h2, .terrafed-site .pilot-aside h2 {
+  font-size: clamp(1.85rem, 3vw, 2.45rem);
+}
+
+.terrafed-site .form-header p {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.terrafed-site .form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  min-width: 0;
+}
+
+.terrafed-site .field {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+}
+
+.terrafed-site .field-wide {
+  grid-column: 1 / -1;
+}
+
+.terrafed-site .field label {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.terrafed-site .required {
+  color: #247440;
+}
+
+.terrafed-site .field :is(input, select, textarea) {
+  width: 100%;
+  min-height: 51px;
+  padding: 10px 12px;
+  border: 1px solid #9dad9f;
+  border-radius: 9px;
+  background: white;
+  font-size: 16px;
+}
+
+.terrafed-site .field textarea {
+  min-height: 142px;
+  resize: vertical;
+}
+
+.terrafed-site .field ::placeholder {
+  color: #67796e;
+}
+
+.terrafed-site .submit-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.terrafed-site .submit-row p {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.terrafed-site .form-status {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #e9f4e9;
+}
+
+.terrafed-site .form-status.error {
+  background: #fbe8dd;
+  color: #813a2d;
+}
+
+.terrafed-site .pilot-aside {
+  padding-block: 22px;
+}
+
+.terrafed-site .pilot-aside::before {
+  content: "";
+  display: block;
+  width: 36px;
+  height: 3px;
+  background: #bd573a;
+  margin-bottom: 22px;
+}
+
+.terrafed-site .pilot-aside p {
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.terrafed-site .pilot-aside ol {
+  list-style: decimal inside;
+  margin-top: 22px;
+}
+
+.terrafed-site .pilot-aside li {
+  padding-block: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.terrafed-site .pilot-aside li p {
+  margin-top: 4px;
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media (max-width: 820px) {
+
+  .terrafed-site {
+    --site-header-height: 65px;
+  }
+
+  .terrafed-site .wrap {
+    width: calc(100% - 36px);
+  }
+
+  .terrafed-site .site-brand img {
+    width: 137px;
+  }
+
+  .terrafed-site .mobile-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    font-weight: 700;
+  }
+
+  .terrafed-site .nav-links {
+    display: none;
+    position: absolute;
+    inset: 100% 0 auto;
+    padding: 15px 18px 20px;
+    background: #4e8e55;
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 10px 25px #193e2620;
+    z-index: 1;
+  }
+
+  .terrafed-site .nav-links.open {
+    display: grid;
+    gap: 10px;
+    justify-content: stretch;
+  }
+
+  .terrafed-site .nav-links > a {
+    padding-block: 9px;
+  }
+
+  .terrafed-site :is(.hero-grid, .evidence-grid, .contact-grid, .pilot-layout) {
+    grid-template-columns: 1fr;
+  }
+
+  .terrafed-site .contact-grid .button {
+    justify-self: start;
+  }
+
+  .terrafed-site .hero .tf-hero-carousel {
+    max-width: 600px;
+    margin-inline: auto;
+  }
+
+  .terrafed-site .participant-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .terrafed-site .preview-card {
+    display: none;
+  }
+
+  .terrafed-site .nav-links a:not(.button) {
+    color: #fff;
+  }
+}
+
+@media (max-width: 600px) {
+
+  .terrafed-site .hero h1 {
+    font-size: clamp(2.7rem, 11vw, 4rem);
+  }
+
+  .terrafed-site :is(.how-grid, .application-tabs, .form-grid) {
+    grid-template-columns: 1fr;
+  }
+
+  .terrafed-site .how-grid {
+    max-width: 420px;
+    margin-inline: auto;
+  }
+
+  .terrafed-site .application-tab {
+    padding: 14px 16px;
+  }
+
+  .terrafed-site .participant-grid {
+    gap: 10px;
+  }
+
+  .terrafed-site .pilot-layout {
+    padding-bottom: 48px;
+  }
+}
+
+@media (max-width: 420px) {
+
+  .terrafed-site .participant-grid {
+    grid-template-columns: 1fr;
+    max-width: 340px;
+    margin-inline: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .terrafed-site .button {
+    transition: none;
+  }
+}

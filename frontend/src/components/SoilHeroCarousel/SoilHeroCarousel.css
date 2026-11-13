@@ -1,111 +1,525 @@
-/* Scoped to the hero: shared site typography and controls stay untouched. */
 .tf-hero-carousel {
-  --tf-blue: #008cd8;
-  --tf-green: #00b029;
-  --tf-ink: #183d4b;
+  --tf-blue: #f39b6d;
+  --tf-green: #8bc48b;
+  --tf-ink: #fff9eb;
+
+  --tf-glow-opacity: 0.15;
+  --tf-glow-width: 42%;
+  --tf-glow-height: 38%;
+  --tf-graphic-bg: radial-gradient(ellipse var(--tf-glow-width) var(--tf-glow-height) at 50% 46%,
+      rgba(238, 246, 225, var(--tf-glow-opacity)) 0%,
+      rgba(238, 246, 225, 0) 100%);
+
   position: relative;
+  isolation: isolate;
   width: 100%;
   min-width: 0;
   overflow: clip;
-  border: 1px solid #d5e4e3;
-  border-radius: 25px;
-  background: #fff;
-  box-shadow: 0 24px 65px -40px #214c525c;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
   color: var(--tf-ink);
   text-align: left;
-  font-family: Inter, sans-serif;
-  isolation: isolate;
+  font-family: 'Inter', Arial, sans-serif;
 }
-.tf-carousel-stage { position: relative; display: grid; }
+
+/* Slides and illustrations */
+.tf-carousel-stage {
+  position: relative;
+  display: grid;
+}
+
 .tf-carousel-slide {
   grid-area: 1 / 1;
   min-width: 0;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity var(--tf-fade) ease-in-out, visibility 0s var(--tf-fade);
+  transition:
+    opacity var(--tf-fade) ease-in-out,
+    visibility 0s var(--tf-fade);
 }
-.tf-carousel-slide.is-active { opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 0s; z-index: 1; }
-.tf-graphic { background: radial-gradient(ellipse at 52% 42%, #edf6f2 0, #f7faf8 44%, #fff 74%); aspect-ratio: 640 / 430; width: 100%; }
-.tf-graphic svg { width: 100%; height: 100%; display: block; overflow: visible; }
-.tf-graphic text { font-family: Inter, sans-serif; letter-spacing: 0; }
-.tf-art-key, .tf-model-name-short { display: none; }
-.tf-svg-label { fill: #244b55; font-size: 14px; font-weight: 600; }
-.tf-svg-small { fill: #4e6b70; font-size: 12px; font-weight: 500; }
-.tf-carousel-copy { padding: 1px 26px 0; }
-.tf-carousel-category-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 9px; }
-.tf-carousel-category { color: #20804b; font-size: 10px; line-height: 1.5; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin: 0; }
-.tf-carousel-count { flex-shrink: 0; color: #52747d; font-size: 10px; line-height: 1.5; font-weight: 700; letter-spacing: .08em; font-variant-numeric: tabular-nums; }
-.tf-carousel-copy h2 { margin: 0 0 10px; color: var(--tf-ink); font-size: clamp(19px, 1.65vw, 25px); line-height: 1.25; letter-spacing: -.035em; font-weight: 650; }
-.tf-carousel-description { font-size: 13px; line-height: 1.7; color: #516973; margin: 0; max-width: 430px; }
-.tf-carousel-bottom { display: flex; align-items: center; justify-content: space-between; margin: 5px 20px 4px; gap: 12px; }
-.tf-carousel-dots { display: flex; gap: 2px; }
-.tf-hero-carousel button { appearance: none; border: 0; cursor: pointer; background: transparent; font-family: inherit; -webkit-tap-highlight-color: transparent; }
-.tf-carousel-dots button { display: grid; place-items: center; min-width: 28px; height: 36px; padding: 0 3px; border-radius: 8px; }
-.tf-carousel-dots button span { display: block; width: 6px; height: 6px; border-radius: 5px; background: #b5cacc; transition: width .3s, background .3s; }
-.tf-carousel-dots button[aria-current="true"] span { width: 24px; background: var(--tf-blue); }
-.tf-carousel-dots button:hover span { background: #3e8eaa; }
-.tf-hero-carousel button:focus-visible { outline: 2px solid var(--tf-blue); outline-offset: 2px; }
-.tf-carousel-pause { color: #4f6c75; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; min-width: 68px; min-height: 36px; padding: 0 6px; border-radius: 8px; }
-.tf-carousel-pause:hover { background: #f0f7f6; }
-.tf-carousel-pause:disabled { cursor: default; color: #61757b; }
-.tf-carousel-pause svg { height: 20px; width: 20px; }
-.tf-carousel-note { border-top: 1px solid #eaf0ee; padding: 11px 25px 13px; font-size: 10px; line-height: 1.65; color: #60757d; background: #fafcfb; margin: 0; min-height: 44px; }
-/* Every sequence restarts when its slide is selected. Only active art animates. */
-.tf-carousel-slide.is-active .tf-connection { stroke-dasharray: 1; animation: tf-path 1.8s ease both; animation-delay: var(--tf-delay); }
+
+.tf-carousel-slide.is-active {
+  z-index: 1;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.tf-graphic {
+  width: 100%;
+  aspect-ratio: 640 / 430;
+  background: var(--tf-graphic-bg);
+}
+
+/* site.css declares a higher-specificity hero gradient. This
+   scoped rule ensures the adjustable glow above takes precedence. */
+.terrafed-site .hero .tf-hero-carousel .tf-graphic {
+  background: var(--tf-graphic-bg);
+}
+
+.tf-graphic svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.tf-graphic text {
+  font-family: 'Inter', Arial, sans-serif;
+  letter-spacing: 0;
+}
+
+.tf-art-key,
+.tf-model-name-short {
+  display: none;
+}
+
+.tf-svg-label {
+  fill: #244b55;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.tf-svg-label-legend {
+  fill: #ebeff0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.tf-svg-small {
+  fill: #4e6b70;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.tf-weights-legend {
+  fill: #fff9e8 !important;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: rgba(35, 81, 51, 0.6);
+  stroke-width: 0.65px;
+}
+
+/* Carousel copy */
+.tf-carousel-copy {
+  padding: 1px 26px 0;
+}
+
+.tf-carousel-category-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+
+.tf-carousel-category {
+  margin: 0;
+  color: #e7f0da;
+  font-size: 10px;
+  line-height: 1.5;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tf-carousel-count {
+  flex-shrink: 0;
+  color: #52747d;
+  font-size: 10px;
+  line-height: 1.5;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+
+.tf-carousel-copy h2 {
+  margin: 0 0 10px;
+  color: var(--tf-ink);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(19px, 1.65vw, 25px);
+  line-height: 1.25;
+  font-weight: 650;
+  letter-spacing: -0.035em;
+}
+
+.tf-carousel-description {
+  max-width: 430px;
+  margin: 0;
+  color: #e7f0da;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* Pagination and playback */
+.tf-carousel-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 5px 20px 4px;
+}
+
+.tf-carousel-dots {
+  display: flex;
+  gap: 2px;
+}
+
+.tf-hero-carousel button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tf-carousel-dots button {
+  display: grid;
+  place-items: center;
+  min-width: 28px;
+  height: 36px;
+  padding: 0 3px;
+  border-radius: 8px;
+}
+
+.tf-carousel-dots button span {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 5px;
+  background: #b5cacc;
+  transition: width 0.3s, background 0.3s;
+}
+
+.tf-carousel-dots button[aria-current='true'] span {
+  width: 24px;
+  background: var(--tf-blue);
+}
+
+.tf-carousel-dots button:hover span {
+  background: #3e8eaa;
+}
+
+.tf-hero-carousel button:focus-visible {
+  outline: 2px solid var(--tf-blue);
+  outline-offset: 2px;
+}
+
+.tf-carousel-pause {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 68px;
+  min-height: 36px;
+  padding: 0 6px;
+  border-radius: 8px;
+  color: #4f6c75;
+  font-size: 11px;
+}
+
+.tf-carousel-pause:hover {
+  background: #f0f7f6;
+}
+
+.tf-carousel-pause:disabled {
+  color: #61757b;
+  cursor: default;
+}
+
+.tf-carousel-pause svg {
+  width: 20px;
+  height: 20px;
+}
+
+.tf-carousel-note {
+  min-height: 44px;
+  margin: 0;
+  padding: 11px 25px 13px;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  background: transparent;
+  color: #e7f0da;
+  font-size: 10px;
+  line-height: 1.65;
+}
+
+/* Slide animations: restart only for the active slide */
+.tf-carousel-slide.is-active .tf-connection {
+  stroke-dasharray: 1;
+  animation: tf-path 1.8s ease both;
+  animation-delay: var(--tf-delay);
+}
+
 .tf-carousel-slide.is-active .tf-lock,
 .tf-carousel-slide.is-active .tf-corner,
 .tf-carousel-slide.is-active .tf-sample,
-.tf-carousel-slide.is-active .tf-percentage { animation: tf-appear .6s ease both; animation-delay: var(--tf-delay); }
-.tf-carousel-slide.is-active .tf-node-halo { animation: tf-pulse 3.5s ease-in-out infinite; animation-delay: var(--tf-delay); transform-box: fill-box; transform-origin: center; }
-.tf-carousel-slide.is-active .tf-brand-halo { animation: tf-halo 4s ease-in-out infinite; }
-.tf-carousel-slide.is-active .tf-draw-boundary { stroke-dasharray: 720; animation: tf-boundary 1.8s .2s ease both; }
-.tf-carousel-slide.is-active .tf-reveal { animation: tf-appear .65s 1.7s ease both; }
-.tf-carousel-slide.is-active .tf-layer { animation: tf-layer 1.2s ease both; }
-.tf-carousel-slide.is-active .tf-layer-first { animation-delay: .25s; }
-.tf-carousel-slide.is-active .tf-layer-second { animation-delay: .95s; }
-.tf-carousel-slide.is-active .tf-model-flow { animation: tf-appear .6s .3s both; }
-.tf-carousel-slide.is-active .tf-sample-flow { animation: tf-appear .8s 1.8s both; }
-.tf-carousel-slide.is-active .tf-local-chip { animation: tf-appear .7s 2.1s both; }
-.tf-carousel-slide.is-active .tf-adapted { animation: tf-appear 1.4s 2.6s both; }
-.tf-carousel-slide.is-active .tf-uncertainty-halo { animation: tf-halo 3s ease-in-out infinite; }
-@keyframes tf-appear { from { opacity: 0; } to { opacity: 1; } }
-@keyframes tf-path { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-@keyframes tf-boundary { from { stroke-dashoffset: 720; } to { stroke-dashoffset: 0; } }
-@keyframes tf-layer { from { opacity: 0; transform: translateY(calc(var(--tf-lift) + 12px)); } to { opacity: 1; transform: translateY(var(--tf-lift)); } }
-@keyframes tf-pulse { 0%, 100% { opacity: .1; scale: .9; } 50% { opacity: .23; scale: 1.15; } }
-@keyframes tf-halo { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
-.tf-reduced-motion *, .tf-reduced-motion .tf-carousel-slide.is-active * { animation: none !important; transition: none !important; }
-@media (prefers-reduced-motion: reduce) {
-  .tf-hero-carousel *, .tf-hero-carousel .tf-carousel-slide.is-active * { animation: none !important; transition: none !important; }
+.tf-carousel-slide.is-active .tf-percentage {
+  animation: tf-appear 0.6s ease both;
+  animation-delay: var(--tf-delay);
 }
+
+.tf-carousel-slide.is-active .tf-node-halo {
+  animation: tf-pulse 3.5s ease-in-out infinite;
+  animation-delay: var(--tf-delay);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.tf-carousel-slide.is-active .tf-brand-halo {
+  animation: tf-halo 4s ease-in-out infinite;
+}
+
+.tf-carousel-slide.is-active .tf-uncertainty-halo {
+  animation: tf-halo 3s ease-in-out infinite;
+}
+
+.tf-carousel-slide.is-active .tf-draw-boundary {
+  stroke-dasharray: 720;
+  animation: tf-boundary 1.8s 0.2s ease both;
+}
+
+.tf-carousel-slide.is-active .tf-reveal {
+  animation: tf-appear 0.65s 1.7s ease both;
+}
+
+.tf-carousel-slide.is-active .tf-layer {
+  animation: tf-layer 1.2s ease both;
+}
+
+.tf-carousel-slide.is-active .tf-layer-first {
+  animation-delay: 0.25s;
+}
+
+.tf-carousel-slide.is-active .tf-layer-second {
+  animation-delay: 0.95s;
+}
+
+/* Preserve the later fine-tuning flow timing supplied in your CSS. */
+.tf-carousel-slide.is-active .tf-model-flow,
+.tf-carousel-slide.is-active .tf-model-tip {
+  animation: tf-appear 0.9s 1.6s both;
+}
+
+.tf-carousel-slide.is-active .tf-sample-flow,
+.tf-carousel-slide.is-active .tf-sample-tip {
+  animation: tf-appear 0.8s 1.8s both;
+}
+
+.tf-carousel-slide.is-active .tf-local-chip {
+  animation: tf-appear 0.7s 2.1s both;
+}
+
+.tf-carousel-slide.is-active .tf-adapted {
+  animation: tf-appear 1.4s 2.6s both;
+}
+
+@keyframes tf-appear {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes tf-path {
+  from {
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes tf-boundary {
+  from {
+    stroke-dashoffset: 720;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes tf-layer {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--tf-lift) + 12px));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(var(--tf-lift));
+  }
+}
+
+@keyframes tf-pulse {
+
+  0%,
+  100% {
+    opacity: 0.1;
+    scale: 0.9;
+  }
+
+  50% {
+    opacity: 0.23;
+    scale: 1.15;
+  }
+}
+
+@keyframes tf-halo {
+
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Mobile layouts */
 @media (max-width: 639px) {
-  .tf-hero-carousel { border-radius: 20px; }
-  .tf-art-key { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 31px; margin: -8px 19px 8px; font-size: 10px; color: #526d76; }
-  .tf-art-key > span { display: inline-flex; align-items: center; gap: 6px; }
-  .tf-swatch { width: 14px; height: 7px; border-radius: 3px; }
-  .tf-swatch-organic { background: linear-gradient(90deg,#6c3c7c,#f4dda3); }
-  .tf-swatch-clay { background: linear-gradient(90deg,#453472,#cee080); }
-  .tf-mobile-scale { font-size: 9px; }
-  .tf-mobile-scale i { display: block; height: 6px; width: 53px; border-radius: 3px; background: linear-gradient(90deg,#4d899a,#c7d3a3,#c87e5b); }
-  .tf-map-legend, .tf-selection-label, .tf-model-name-full { display: none; }
-  .tf-model-name-short { display: block; fill: #244b55; font-size: 22px; font-weight: 600; }
-  .tf-percent-text { font-size: 20px; }
-  .tf-carousel-copy { padding: 3px 19px 0; }
-  .tf-carousel-category { font-size: 9px; letter-spacing: .08em; }
-  .tf-carousel-count { font-size: 9px; }
-  .tf-carousel-copy h2 { font-size: 21px; }
-  .tf-carousel-description { font-size: 12px; }
-  .tf-carousel-bottom { margin: 4px 14px 4px; }
-  .tf-carousel-note { padding: 10px 19px 12px; font-size: 9px; min-height: 52px; }
+  .tf-hero-carousel {
+    border-radius: 0;
+  }
+
+  .tf-art-key {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 31px;
+    margin: -8px 19px 8px;
+    color: #526d76;
+    font-size: 10px;
+  }
+
+  .tf-art-key>span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .tf-swatch {
+    width: 14px;
+    height: 7px;
+    border-radius: 3px;
+  }
+
+  .tf-swatch-organic {
+    background: linear-gradient(90deg, #6c3c7c, #f4dda3);
+  }
+
+  .tf-swatch-clay {
+    background: linear-gradient(90deg, #453472, #cee080);
+  }
+
+  .tf-mobile-scale {
+    font-size: 9px;
+  }
+
+  .tf-mobile-scale i {
+    display: block;
+    width: 53px;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #4d899a, #c7d3a3, #c87e5b);
+  }
+
+  .tf-map-legend,
+  .tf-selection-label,
+  .tf-model-name-full {
+    display: none;
+  }
+
+  .tf-model-name-short {
+    display: block;
+    fill: #244b55;
+    font-size: 22px;
+    font-weight: 600;
+  }
+
+  .tf-percent-text {
+    font-size: 20px;
+  }
+
+  .tf-carousel-copy {
+    padding: 3px 19px 0;
+  }
+
+  .tf-carousel-category {
+    font-size: 9px;
+    letter-spacing: 0.08em;
+  }
+
+  .tf-carousel-count {
+    font-size: 9px;
+  }
+
+  .tf-carousel-copy h2 {
+    font-size: 21px;
+  }
+
+  .tf-carousel-description {
+    font-size: 12px;
+  }
+
+  .tf-carousel-bottom {
+    gap: 8px;
+    margin: 4px 14px;
+  }
+
+  .tf-carousel-dots {
+    gap: 0;
+  }
+
+  .tf-carousel-dots button {
+    min-width: 24px;
+    padding: 0;
+  }
+
+  .tf-carousel-dots button[aria-current='true'] span {
+    width: 18px;
+  }
+
+  .tf-carousel-pause {
+    min-width: 58px;
+  }
+
+  .tf-carousel-note {
+    min-height: 52px;
+    padding: 10px 19px 12px;
+    font-size: 9px;
+  }
 }
-@media (max-width: 639px) {
-  .tf-carousel-bottom { gap: 8px; }
-  .tf-carousel-dots { gap: 0; }
-  .tf-carousel-dots button { min-width: 24px; padding: 0; }
-  .tf-carousel-dots button[aria-current="true"] span { width: 18px; }
-  .tf-carousel-pause { min-width: 58px; }
-}
+
 @media (max-width: 359px) {
-  .tf-carousel-category { font-size: 8px; letter-spacing: .04em; }
+  .tf-carousel-category {
+    font-size: 8px;
+    letter-spacing: 0.04em;
+  }
+}
+
+/* Accessibility: respect system and in-app reduced-motion settings. */
+.tf-reduced-motion *,
+.tf-reduced-motion .tf-carousel-slide.is-active * {
+  animation: none !important;
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .tf-hero-carousel *,
+  .tf-hero-carousel .tf-carousel-slide.is-active * {
+    animation: none !important;
+    transition: none !important;
+  }
 }

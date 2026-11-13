@@ -1,9 +1,9 @@
 import { useEffect, useId, useState, useSyncExternalStore } from "react";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logoCarousel.png";
 import "./SoilHeroCarousel.css";
 
 // Timing is in milliseconds. Fade duration is passed to the scoped stylesheet.
-const SLIDE_DURATION_MS = 5500;
+const SLIDE_DURATION_MS = 3500;
 const FADE_DURATION_MS = 800;
 const slides = [
   {
@@ -79,10 +79,10 @@ const UNCERTAINTY_ZONES = [
 ];
 const selection = "35,36 215,36 215,216 35,216 35,36";
 const palettes = {
-  clay: ["#453472", "#3f648b", "#218f9c", "#5cb991", "#cee080"],
-  organic: ["#6c3c7c", "#a15467", "#d9875d", "#e8bc78", "#f4dda3"],
-  local: ["#315b71", "#397d83", "#3d9e85", "#8dc58c", "#d5e6a2"],
-  uncertainty: ["#4d899a", "#7cb2af", "#c7d3a3", "#e5b976", "#c87e5b"],
+  clay: ["#466D58", "#56816B", "#77A881", "#A7C69A", "#E1D993"],
+  organic: ["#806F5A", "#B28D6C", "#DDB17B", "#E8CF98", "#F3E7C7"],
+  local: ["#456D59", "#629A76", "#82B88A", "#B8CF9D", "#E4E3B9"],
+  uncertainty: ["#729C89", "#A7C8A2", "#E0DFAF", "#E9C189", "#E4946C"],
 };
 // Smooth, deterministic example surfaces: no random noise or invented observations.
 function estimate(x, y, variant) {
@@ -157,7 +157,7 @@ function Legend({ id, colors, x, y, label, width = 158 }) {
         rx="10"
         fill="white"
         fillOpacity=".95"
-        stroke="#dbe7e6"
+        stroke="#E2EAD9"
       />
       <text y="-3" className="tf-svg-label">
         {label}
@@ -175,18 +175,18 @@ function Legend({ id, colors, x, y, label, width = 158 }) {
 
 function SharedFarmlandScene({ id }) {
   const crops = [
-    "#93b896",
-    "#c3c797",
-    "#709b7c",
-    "#abbf8b",
-    "#b5bd87",
-    "#6f9e82",
-    "#8aaa7d",
-    "#ccd09e",
-    "#8cb59b",
-    "#9eb98a",
-    "#b7c593",
-    "#6f967a",
+    "#AFC8A1",
+    "#D8D4A2",
+    "#8EB593",
+    "#C8D1A4",
+    "#D7D09E",
+    "#8EB49A",
+    "#A9BE92",
+    "#E0DAAE",
+    "#A4C8A5",
+    "#B4C69C",
+    "#D5D4A4",
+    "#8BAE8D",
   ];
 
   // The two visible ground faces share the exact projected corners of the
@@ -217,14 +217,14 @@ function SharedFarmlandScene({ id }) {
         cy="373"
         rx="215"
         ry="24"
-        fill="#2d6650"
+        fill="#658F73"
         opacity=".07"
       />
       {/* Ground thickness: draw screen-vertical faces behind the top plane. */}
-      <path d={groundFace(leftCorner, frontCorner)} fill="#aab29d" />
-      <path d={groundFace(frontCorner, rightCorner)} fill="#96a08c" />
+      <path d={groundFace(leftCorner, frontCorner)} fill="#B4B9A1" />
+      <path d={groundFace(frontCorner, rightCorner)} fill="#9FA892" />
       <g transform={PLANE}>
-        <rect width="250" height="250" fill="#dae1c0" />
+        <rect width="250" height="250" fill="#E7E4C8" />
         {crops.map((fill, i) => (
           <g key={i}>
             <rect
@@ -246,7 +246,7 @@ function SharedFarmlandScene({ id }) {
         ))}
         <path
           d="M5 84H245M5 162H245M66 4V245M126 4V245M186 4V245"
-          stroke="#eef0dc"
+          stroke="#F6F1D8"
           strokeWidth="4"
         />
       </g>
@@ -259,12 +259,12 @@ function SharedFarmlandScene({ id }) {
               cy="2"
               rx="12"
               ry="5"
-              fill="#315f45"
+              fill="#426E51"
               opacity=".13"
             />
-            <path d="M0 0V-16" stroke="#7d8063" strokeWidth="3" />
-            <ellipse cy="-18" rx="10" ry="13" fill="#609a79" />
-            <ellipse cx="-4" cy="-21" rx="6" ry="10" fill="#83b290" />
+            <path d="M0 0V-16" stroke="#887F5D" strokeWidth="3" />
+            <ellipse cy="-18" rx="10" ry="13" fill="#6E9B73" />
+            <ellipse cx="-4" cy="-21" rx="6" ry="10" fill="#A5C69B" />
           </g>
         );
       })}
@@ -290,7 +290,7 @@ function Raster({
             <rect key={i} {...cell} width="6.1" height="6.1" />
           ))}
         </g>
-        <rect {...FIELD} fill="none" stroke="#f5fffe" strokeWidth="1.2" />
+        <rect {...FIELD} fill="none" stroke="#FFF9EC" strokeWidth="1.2" />
         <path
           d="M95 36V216M155 36V216M35 96H215M35 156H215"
           stroke="white"
@@ -308,11 +308,11 @@ function FieldSelectionSlide({ id }) {
       <SharedFarmlandScene id={id} />
       <g transform="translate(0 -22)" className="tf-boundary">
         <g transform={PLANE}>
-          <rect {...FIELD} fill="#008cd8" fillOpacity=".13" />
+          <rect {...FIELD} fill="#F39B6D" fillOpacity=".13" />
           <polyline
             points={selection}
             fill="none"
-            stroke="#008cd8"
+            stroke="#F39B6D"
             strokeWidth="3"
             className="tf-draw-boundary"
           />
@@ -335,7 +335,7 @@ function FieldSelectionSlide({ id }) {
                 cy={py}
                 r="6"
                 fill="white"
-                stroke="#008cd8"
+                stroke="#F39B6D"
                 strokeWidth="2.5"
               />
             </g>
@@ -343,11 +343,11 @@ function FieldSelectionSlide({ id }) {
         })}
       </g>
       <g transform="translate(64 70)" className="tf-map-tools">
-        <rect width="40" height="119" rx="12" fill="white" stroke="#d2e2df" />
+        <rect width="40" height="119" rx="12" fill="white" stroke="#DCE5D8" />
         <path
           d="M12 20H28M20 12V28M12 59H28"
           fill="none"
-          stroke="#385865"
+          stroke="#516F5B"
           strokeWidth="2"
         />
         <path d="M8 39H32M8 78H32" stroke="#e1ebe7" />
@@ -357,21 +357,21 @@ function FieldSelectionSlide({ id }) {
           width="16"
           height="15"
           rx="2"
-          fill="#e0f2fb"
-          stroke="#008cd8"
+          fill="#ECF3E7"
+          stroke="#F39B6D"
           strokeDasharray="3 2"
         />
       </g>
       <g transform="translate(363 79)" className="tf-reveal tf-selection-label">
-        <rect width="201" height="37" rx="18" fill="white" stroke="#cce6ee" />
-        <circle cx="20" cy="19" r="4" fill="#008cd8" />
+        <rect width="201" height="37" rx="18" fill="white" stroke="#DDE8D2" />
+        <circle cx="20" cy="19" r="4" fill="#F39B6D" />
         <text x="33" y="24" className="tf-svg-label">
           Field boundary defined
         </text>
       </g>
       <path
         d="M376 118L366 154"
-        stroke="#008cd8"
+        stroke="#F39B6D"
         strokeDasharray="3 4"
         opacity=".5"
       />
@@ -440,7 +440,7 @@ function ModelChip({ x, label, active }) {
       />
       <g
         transform="translate(15 13)"
-        stroke={active ? "#218147" : "#5c8292"}
+        stroke={active ? "#4A9161" : "#5c8292"}
         fill="none"
         strokeWidth="1.4"
       >
@@ -461,20 +461,7 @@ function FineTuningSlide({ id }) {
   const [px, py] = project(115, 126);
   return (
     <>
-      <defs>
-        <marker
-          id={`${id}-arrow`}
-          viewBox="0 0 10 10"
-          refX="8"
-          refY="5"
-          markerWidth="6"
-          markerHeight="6"
-          orient="auto-start-reverse"
-        >
-          <path d="M0 0L10 5L0 10Z" fill="#464648" />
-        </marker>
-      </defs>
-      <SharedFarmlandScene id={id} />
+<SharedFarmlandScene id={id} />
       <Raster variant="clay" elevation={17} opacity={0.6} />
       <Raster
         variant="local"
@@ -485,22 +472,32 @@ function FineTuningSlide({ id }) {
       <ModelChip x={62} label="Global Model" />
       <path
         className="tf-model-flow"
-        d="M237 69H305"
-        stroke="#464648"
+        d="M237 69 H311"
+        stroke="#315e48"
         fill="none"
-        strokeWidth="1.7"
-        strokeDasharray="4 5"
-        markerEnd={`url(#${id}-arrow)`}
+        strokeWidth="2.15"
+        strokeDasharray="4 6"
+        strokeLinecap="round"
+      />
+      <path
+        className="tf-flow-tip tf-model-tip"
+        d="M310 64 L317 69 L310 74 Z"
+        fill="#315e42"
       />
       <ModelChip x={324} label="Locally Fine-Tuned Model" active />
       <path
         className="tf-sample-flow"
-        d={`M${px} ${py - 26} C${px + 40} ${py - 26} 440 170 440 130 V94`}
-        stroke="#464648"
+        d={`M${px} ${py - 26} C${px + 40} ${py - 26} 440 170 440 130 V103`}
+        stroke="#315e48"
         fill="none"
-        strokeWidth="1.7"
-        strokeDasharray="4 5"
-        markerEnd={`url(#${id}-arrow)`}
+        strokeWidth="2.15"
+        strokeDasharray="4 6"
+        strokeLinecap="round"
+      />
+      <path
+        className="tf-flow-tip tf-sample-tip"
+        d="M435 103 L440 96 L445 103 Z"
+        fill="#315e48"
       />
       {samples.map(([x, y], i) => {
         const [sx, sy] = project(x, y);
@@ -520,23 +517,23 @@ function FineTuningSlide({ id }) {
             />
             <path
               d={`M${sx} ${sy - 17}v-16`}
-              stroke="#176e44"
+              stroke="#fa9069"
               strokeWidth="2"
             />
             <circle
               cx={sx}
               cy={sy - 36}
               r="6"
-              fill="#fff"
-              stroke="#00a443"
+              fill="#FFF9EC"
+              stroke="#fa9069"
               strokeWidth="2.5"
             />
           </g>
         );
       })}
       <g transform="translate(445 340)">
-        <circle r="5" fill="white" stroke="#218147" strokeWidth="2" />
-        <text x="13" y="5" className="tf-svg-label">
+        <circle r="5" fill="white" stroke="#fa9069" strokeWidth="2" />
+        <text x="13" y="5" className="tf-svg-label-legend">
           Local soil measurements
         </text>
       </g>
@@ -586,7 +583,7 @@ function UncertaintySlide({ id }) {
                 height="26"
                 rx="9"
                 fill="white"
-                stroke="#d1ddd4"
+                stroke="#D7E4D2"
               />
               <text
                 textAnchor="middle"
@@ -619,7 +616,7 @@ function Lock({ x, y, delay }) {
         <path
           d="M-5-2V-5a5 5 0 0110 0v3"
           fill="none"
-          stroke="#268055"
+          stroke="#4A9161"
           strokeWidth="1.7"
         />
         <rect
@@ -629,10 +626,10 @@ function Lock({ x, y, delay }) {
           height="11"
           rx="2"
           fill="#e0f2e4"
-          stroke="#268055"
+          stroke="#4A9161"
           strokeWidth="1.5"
         />
-        <circle cy="3" r="1.5" fill="#268055" />
+        <circle cy="3" r="1.5" fill="#4A9161" />
       </g>
     </g>
   );
@@ -641,23 +638,23 @@ function Lock({ x, y, delay }) {
 function FederationSlide({ id }) {
   const nodes = [
     [202, 225],
-    [285, 168],
+    [299, 168],
     [397, 211],
-    [424, 299],
-    [295, 338],
-    [180, 297],
+    [424, 320],
+    [279, 330],
+    [240, 250],
   ];
   return (
     <>
       <defs>
         <radialGradient id={`${id}-sphere`} cx="35%" cy="25%" r="80%">
-          <stop stopColor="#fff" />
-          <stop offset=".55" stopColor="#e6f3f1" />
-          <stop offset="1" stopColor="#c4e2e3" />
+          <stop stopColor="#FFF9EC" />
+          <stop offset=".55" stopColor="#E7EFD9" />
+          <stop offset="1" stopColor="#C5DAC2" />
         </radialGradient>
         <radialGradient id={`${id}-halo`}>
-          <stop stopColor="#00b029" stopOpacity=".1" />
-          <stop offset="1" stopColor="#00b029" stopOpacity="0" />
+          <stop stopColor="#6BB77B" stopOpacity=".1" />
+          <stop offset="1" stopColor="#6BB77B" stopOpacity="0" />
         </radialGradient>
         <clipPath id={`${id}-globe`}>
           <circle cx="312" cy="258" r="132" />
@@ -677,10 +674,10 @@ function FederationSlide({ id }) {
         cy="258"
         r="132"
         fill={`url(#${id}-sphere)`}
-        stroke="#c6dfdf"
+        stroke="#BBD3B8"
       />
       <g clipPath={`url(#${id}-globe)`}>
-        <g fill="none" stroke="#87b9c3" strokeWidth=".85" opacity=".36">
+        <g fill="none" stroke="#96BBA5" strokeWidth=".85" opacity=".36">
           {[44, 89, 130].map((r) => (
             <ellipse key={r} cx="312" cy="258" rx={r} ry="132" />
           ))}
@@ -695,9 +692,9 @@ function FederationSlide({ id }) {
           ))}
         </g>
         <g
-          fill="#88bba4"
+          fill="#88B48A"
           opacity=".69"
-          stroke="#f0f9ef"
+          stroke="#F8F4E8"
           strokeWidth="1.4"
           strokeLinejoin="round"
         >
@@ -709,7 +706,7 @@ function FederationSlide({ id }) {
           <path d="M394 316L414 309L435 321L429 339L407 344L389 334Z" />
         </g>
       </g>
-      <g fill="none" stroke="#008cd8" strokeWidth="1.7" strokeOpacity=".5">
+      <g fill="none" stroke="#F39B6D" strokeWidth="1.7" strokeOpacity=".5">
         {nodes.map(([x, y], i) => (
           <path
             key={i}
@@ -724,23 +721,23 @@ function FederationSlide({ id }) {
         <g key={i} transform={`translate(${x} ${y})`}>
           <circle
             r="14"
-            fill="#008cd8"
+            fill="#F39B6D"
             opacity=".1"
             className="tf-node-halo"
             style={{ "--tf-delay": `${i * 0.4}s` }}
           />
           <path
             d="M0 2C-17-10-9-24 0-24S17-10 0 2Z"
-            fill={i % 2 ? "#00a644" : "#008cd8"}
+            fill={i % 2 ? "#569C66" : "#F39B6D"}
             stroke="white"
             strokeWidth="2"
           />
           <circle cy="-15" r="3" fill="white" />
         </g>
       ))}
-      <Lock x={220} y={140} delay={0.8} />
-      <Lock x={408} y={155} delay={1.2} />
-      <Lock x={360} y={287} delay={1.6} />
+      <Lock x={205} y={135} delay={0.8} />
+      <Lock x={370} y={155} delay={1.2} />
+      <Lock x={295} y={265} delay={1.6} />
       <ellipse
         cx="312"
         cy="61"
@@ -756,24 +753,38 @@ function FederationSlide({ id }) {
         height="58"
         rx="17"
         fill="white"
-        stroke="#d7e8e1"
+        stroke="#D8E6D4"
       />
       <image
         href={logo}
         x="220"
         y="41"
-        width="184"
-        height="33"
+        maxWidth="100%"
+        height="36"
         preserveAspectRatio="xMidYMid meet"
       />
+      {/* Model updates legend */}
       <g transform="translate(450 350)">
-        <circle r="4" fill="#008cd8" />
-        <text x="12" y="4" className="tf-svg-small">
-          Model updates
+        <circle
+          r="4"
+          fill="#F39B6D"
+        />
+        <text
+          x="12"
+          y="4"
+          className="tf-svg-small tf-weights-legend"
+        >
+          <tspan x="12" dy="0">
+            Model updates via
+          </tspan>
+          <tspan x="12" dy="16">
+            Private Data
+          </tspan>
         </text>
       </g>
     </>
   );
+  
 }
 
 const graphics = [
@@ -787,8 +798,6 @@ const graphics = [
 export default function SoilHeroCarousel() {
   const instanceId = useId().replace(/:/g, "");
   const [index, setIndex] = useState(0);
-  const [hovered, setHovered] = useState(false);
-  const [focused, setFocused] = useState(false);
   const [paused, setPaused] = useState(false);
   const [hidden, setHidden] = useState(
     () => typeof document !== "undefined" && document.hidden,
@@ -798,7 +807,7 @@ export default function SoilHeroCarousel() {
     getReducedMotion,
     getServerMotion,
   );
-  const stopped = paused || hovered || focused || hidden || reducedMotion;
+  const stopped = paused || hidden || reducedMotion;
 
   useEffect(() => {
     const onVisibility = () => setHidden(document.hidden);
@@ -832,13 +841,6 @@ export default function SoilHeroCarousel() {
       aria-label="TerraFed illustrated workflow"
       aria-roledescription="carousel"
       style={{ "--tf-fade": `${FADE_DURATION_MS}ms` }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onFocusCapture={() => setFocused(true)}
-      onBlurCapture={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget))
-          setFocused(false);
-      }}
       onKeyDown={onKeyDown}
     >
       <div
